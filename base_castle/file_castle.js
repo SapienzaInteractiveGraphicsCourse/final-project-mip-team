@@ -3,6 +3,8 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
+    import {move} from '../common_functions.js';
+
 
     //Create the renderer
     var renderer = new THREE.WebGLRenderer();
@@ -85,60 +87,9 @@
     /* Codice per spostarsi cliccando tasti sulla tastiera */
   	document.addEventListener('keypress', (event) => {
   	  const keyName = event.key;
-
-  	  if (keyName === 'Control') {
-  		// do not alert when only Control key is pressed.
-  		return;
-  	  }
-  	  if (keyName == 'w') {
-  		camera.position.z -= 1;
-  	  }
-  	  if (keyName == 's') {
-  		camera.position.z += 1;
-  	  }
-  	  if (keyName == 'a') {
-  		camera.position.x -= 1;
-  	  }
-  	  if (keyName == 'd') {
-  		camera.position.x += 1;
-  	  }
-  	  if (keyName == 'e') {
-  		camera.position.y += 1;
-  	  }
-  	  if (keyName == 'r') {
-  		camera.position.y -= 1;
-  	  }
-  	  if (keyName == 'z') {
-  		camera.rotation.y += 0.1;
-  	  }
-  	  if (keyName == 'x') {
-  		camera.rotation.y -= 0.1;
-  	  }
+      move(camera,keyName);
       }, false);
-      
-/*
-      document.getElementById("change").onclick = function (event) {
-        //scene.remove(world.scene)
-        if(world_loaded < 3) world_loaded += 1;
-        //questo andrà tolto dopo il terzo il giocatore vince
-        else world_loaded = 1;
-        if(world_loaded == 1){
-            world = load_world('blender-files/source/tutorial_castle_town.gltf',-1,3,50);
-        }
-        if(world_loaded == 2){
-            world = load_world('blender-files/source/nature_world.gltf',10,22,50);
-        }
-        if(world_loaded == 3){
-            world = load_world('blender-files/source/tutorial_castle_town.gltf',-10,3,50);
-        }
-    };*/
 
-    function change_world(position_portal_x,position_portal_y, position_portal_z){
-        if (camera.position.x == position_portal_x && camera.position.y == position_portal_y && camera.position.z == position_portal_z){
-          //mettere schermata vittoria
-          window.location.replace("../base_nature/index_nature.html");
-        }
-    }
   	/* fine */
 
     //Animation
