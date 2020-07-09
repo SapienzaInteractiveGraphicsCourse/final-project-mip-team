@@ -1,105 +1,154 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
-    import { OBJLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
-    import { MTLLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/MTLLoader.js';
-    import {move} from '../common_functions.js';
+    import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
+    import {load_world, onKeyUp, onKeyDown} from '../common_functions.js';
 
-    //Create the renderer
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    var renderer, scene, camera, controls;
+    var objects = [];
+    var raycaster;
 
-    //Create the scene
-    const scene = new THREE.Scene();
+    var movements = [false,false,false,false,false];
 
-    //costante per identificare il mondo attualmente visto
-    var world_loaded = 1;
+    var prevTime = performance.now();
+    var velocity = new THREE.Vector3();
+    var direction = new THREE.Vector3();
 
-    /* Lights */
-    var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
-		dirLight.color.setHSL( 0.1, 1, 0.95 );
-		dirLight.position.set( - 1, 1.75, 1 );
-		dirLight.position.multiplyScalar( 30 );
-		scene.add( dirLight );
+    function controller(){
+      controls = new PointerLockControls( camera, document.body );
 
-		dirLight.castShadow = true;
+				var blocker = document.getElementById( 'blocker' );
+				var instructions = document.getElementById( 'instructions' );
 
-		dirLight.shadow.mapSize.width = 2048;
-		dirLight.shadow.mapSize.height = 2048;
+				instructions.addEventListener( 'click', function () {
 
-		var d = 50;
+					controls.lock();
 
-		dirLight.shadow.camera.left = - d;
-		dirLight.shadow.camera.right = d;
-		dirLight.shadow.camera.top = d;
-		dirLight.shadow.camera.bottom = - d;
+				}, false );
 
-		dirLight.shadow.camera.far = 3500;
-		dirLight.shadow.bias = - 0.0001;
+				controls.addEventListener( 'lock', function () {
 
-    /*
-		dirLightHeper = new THREE.DirectionalLightHelper( dirLight, 10 );
-		scene.add( dirLightHeper );
-    */
+					instructions.style.display = 'none';
+					blocker.style.display = 'none';
 
-    var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
-		hemiLight.color.setHSL( 0.6, 1, 0.6 );
-    scene.add( hemiLight );
+				} );
 
-    var lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
-    scene.add( lightAmbient );
-    /* */
+				controls.addEventListener( 'unlock', function () {
 
-    //Camera
-    const camera = new THREE.PerspectiveCamera(35,
-      window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.z = 50;
-    camera.position.x = -10;
-    camera.position.y = 3;
+					blocker.style.display = 'block';
+					instructions.style.display = '';
 
-    //Loaders
-    load_world('./nature.obj','./nature.mtl',-10,26,80);
-    // funzione per fare il load del mondo
-    let cube;
-    function load_world(path_obj_world, path_mtl_world, start_position_x, start_position_y, start_position_z){
-        var loader = new OBJLoader();
-        var mtlLoader = new MTLLoader();
-        camera.position.x = start_position_x;
-        camera.position.y = start_position_y;
-        camera.position.z = start_position_z;
-        new Promise((resolve) => {
-            mtlLoader.load(path_mtl_world, (materials) => {
-              resolve(materials);
-            });
-          })
-          .then((materials) => {
-            materials.preload();
-            loader.setMaterials(materials);
-            loader.load(path_obj_world, (object) => {
-              cube = object;
-              scene.add(object);
-            });
-          });
+				} );
+
+				scene.add( controls.getObject() );
+
+				document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements,velocity);}, false );
+				document.addEventListener( 'keyup', (event) => {onKeyUp(event,movements);}, false );
+
+				raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 20, 10 );
     }
-    /* Codice per spostarsi cliccando tasti sulla tastiera */
-  	document.addEventListener('keypress', (event) => {
-  	  const keyName = event.key;
-      move(camera,keyName);
-      }, false);
-      
 
+    function init(){
+      //Create the renderer
+      renderer = new THREE.WebGLRenderer( { antialias: true } );
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      document.body.appendChild( renderer.domElement );
 
-    function change_world(position_portal_x,position_portal_y, position_portal_z){
-        if (camera.position.x == position_portal_x && camera.position.y == position_portal_y && camera.position.z == position_portal_z){
-          window.location.replace("../base_castle/index_castle.html");
+      //Create the scene
+      scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xffffff );
+      /* Lights */
+      var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+      dirLight.color.setHSL( 0.1, 1, 0.95 );
+      dirLight.position.set( - 1, 1.75, 1 );
+      dirLight.position.multiplyScalar( 30 );
+      scene.add( dirLight );
+
+      dirLight.castShadow = true;
+
+      dirLight.shadow.mapSize.width = 2048;
+      dirLight.shadow.mapSize.height = 2048;
+
+      var d = 50;
+
+      dirLight.shadow.camera.left = - d;
+      dirLight.shadow.camera.right = d;
+      dirLight.shadow.camera.top = d;
+      dirLight.shadow.camera.bottom = - d;
+
+      dirLight.shadow.camera.far = 3500;
+      dirLight.shadow.bias = - 0.0001;
+
+      var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+      hemiLight.color.setHSL( 0.6, 1, 0.6 );
+      scene.add( hemiLight );
+
+      var lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
+      scene.add( lightAmbient );
+
+      //Camera
+      camera = new THREE.PerspectiveCamera(35,
+        window.innerWidth/window.innerHeight, 0.1, 1000);
+      //
+      camera.position.z = 50;
+      camera.position.x = -10;
+      camera.position.y = 3;
+
+      //Loaders
+      load_world(scene, camera, objects, './nature.obj','./nature.mtl',-10,26,80);
+      controller();
+    }
+
+    function motion(){
+      if ( controls.isLocked === true ) {
+
+        raycaster.ray.origin.copy( controls.getObject().position );
+        raycaster.ray.origin.y -= 10;
+
+        var intersections = raycaster.intersectObjects( objects );
+
+        var onObject = intersections.length > 0;
+
+        var time = performance.now();
+        var delta = ( time - prevTime ) / 1000;
+
+        velocity.x -= velocity.x * 10.0 * delta;
+        velocity.z -= velocity.z * 10.0 * delta;
+
+        velocity.y -= 9.8 * 100.0 * delta;
+
+        direction.z = Number( movements[0] ) - Number( movements[1] );
+        direction.x = Number( movements[3] ) - Number( movements[2] );
+        direction.normalize();
+
+        if ( movements[0] || movements[1] ) velocity.z -= direction.z * 400.0 * delta;
+        if ( movements[2] || movements[3] ) velocity.x -= direction.x * 400.0 * delta;
+
+        if ( onObject === true ) {
+
+          velocity.y = Math.max( 0, velocity.y );
+          movements[4] = true;
+
         }
-    }
-  	/* fine */
 
+        controls.moveRight( - velocity.x * delta );
+        controls.moveForward( - velocity.z * delta );
+        controls.getObject().position.y += ( velocity.y * delta );
+
+        if ( controls.getObject().position.y < 10 ) {
+          velocity.y = 0;
+          controls.getObject().position.y = 10;
+          movements[4] = true;
+        }
+        prevTime = time;
+
+      }
+    }
     //Animation
     var animate = function () {
       requestAnimationFrame( animate );
+      motion();
       renderer.render(scene, camera);
-      change_world(-1,23,50)
     }
+    init();
     animate();
