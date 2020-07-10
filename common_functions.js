@@ -1,6 +1,8 @@
-
+import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { OBJLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/OBJLoader.js';
 import { MTLLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/MTLLoader.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
+
 
 //secondo me questa ormai si può togliere
 export function move(camera,keyName){
@@ -59,7 +61,49 @@ export function move(camera,keyName){
           scene.add(object);
         });
       });
-}
+    }
+
+    // funzione per fare il load del mondo
+    export function load_world_gltf(scene, camera, path_gltf_world, start_position_x, start_position_y, start_position_z){
+        var loader = new GLTFLoader();
+        camera.position.x = start_position_x;
+        camera.position.y = start_position_y;
+        camera.position.z = start_position_z;
+        loader.load( path_gltf_world, function ( gltf ) {
+
+        scene.add( gltf.scene );
+
+        }, undefined, function ( error ) {
+
+            console.error( error );
+
+        } );
+      }
+
+      export function load_object_gltf(scene, camera, path_gltf_object,
+                                      start_position_x, start_position_y, start_position_z,
+                                      start_rotation_x, start_rotation_y, start_rotation_z){
+        var loader = new GLTFLoader();
+        loader.load( path_gltf_object, function ( gltf ) {
+          var dragonModel = gltf.scene;
+          scene.add( dragonModel );
+
+          dragonModel.position.x = start_position_x;
+          dragonModel.position.y = start_position_y;
+          dragonModel.position.z = start_position_z;
+          dragonModel.rotation.x = THREE.Math.degToRad(start_rotation_x);
+          dragonModel.rotation.y = THREE.Math.degToRad(start_rotation_y);
+          dragonModel.rotation.z = THREE.Math.degToRad(start_rotation_z);
+
+          }, undefined, function ( error ) {
+
+              console.error( error );
+
+          } );
+
+      }
+
+
 
 export function onKeyDown(event,movements,velocity) {
   switch ( event.keyCode ) {
