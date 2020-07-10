@@ -1,7 +1,7 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {move,  onKeyUp, onKeyDown, load_world_gltf, load_object_gltf} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -105,6 +105,7 @@
 
       //Create the scene
       scene = new THREE.Scene();
+      scene.background = new THREE.Color( 0x74D7FF );
 
       /* Lights */
       var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -154,13 +155,6 @@
       load_object_gltf(scene, camera, 'blender-files/dragon.gltf', -8, 18, -60, 20, 0, 0)
       controller();
     }
-
-
-    /* Codice per spostarsi cliccando tasti sulla tastiera */
-  	document.addEventListener('keypress', (event) => {
-  	  const keyName = event.key;
-      move(camera,keyName);
-      }, false);
 
   	/* fine */
 

@@ -4,37 +4,6 @@ import { MTLLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/
 import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 
 
-//secondo me questa ormai si può togliere
-export function move(camera,keyName){
-    if (keyName === 'Control') {
-      // do not alert when only Control key is pressed.
-      return;
-      }
-      if (keyName == 'w') {
-      camera.position.z -= 1;
-      }
-      if (keyName == 's') {
-      camera.position.z += 1;
-      }
-      if (keyName == 'a') {
-      camera.position.x -= 1;
-      }
-      if (keyName == 'd') {
-      camera.position.x += 1;
-      }
-      if (keyName == 'e') {
-      camera.position.y += 1;
-      }
-      if (keyName == 'r') {
-      camera.position.y -= 1;
-      }
-      if (keyName == 'z') {
-      camera.rotation.y += 0.1;
-      }
-      if (keyName == 'x') {
-      camera.rotation.y -= 0.1;
-      }
-  }
 // funzione da rivedere
   export function change_world(position_portal_x,position_portal_y, position_portal_z){
     if (camera.position.x == position_portal_x && camera.position.y == position_portal_y && camera.position.z == position_portal_z){
