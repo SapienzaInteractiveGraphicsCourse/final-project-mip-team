@@ -14,6 +14,8 @@
     var velocity = new THREE.Vector3();
     var direction = new THREE.Vector3();
 
+    var dragonModel;
+
     function controller(){
       controls = new PointerLockControls( camera, document.body );
 
@@ -86,7 +88,7 @@
 
         if ( controls.getObject().position.y < 10 ) {
           velocity.y = 0;
-          controls.getObject().position.y = 10;
+          controls.getObject().position.y = 3;
           movements[4] = true;
         }
         prevTime = time;
@@ -152,7 +154,8 @@
       //Load environment
       load_world_gltf(scene, camera, 'blender-files/source/tutorial_castle_town.gltf',-10,3,50);
       //Load dragon
-      load_object_gltf(scene, camera, 'blender-files/dragon.gltf', -8, 18, -60, 20, 0, 0)
+      load_object_gltf(scene, camera, 'dragon', true, 'blender-files/dragon.gltf', -8, 18, -60, 20, 0, 0);
+
       controller();
     }
 
@@ -161,6 +164,16 @@
     //Animation
     var animate = function () {
       requestAnimationFrame( animate );
+
+      // Check if the object 'dragon' is loaded
+      if (scene.getObjectByName('dragon')) {
+        var dragonModel = scene.getObjectByName('dragon');
+
+        // First animation
+        var Torso = dragonModel.getObjectByName('Torso');
+        if (Torso) Torso.rotation.y += 0.05;
+      }
+
       motion();
       renderer.render(scene, camera);
     }

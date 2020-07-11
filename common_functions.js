@@ -3,6 +3,7 @@ import { OBJLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/
 import { MTLLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/MTLLoader.js';
 import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 
+var objModel;
 
 // funzione da rivedere
 export function change_world(position_portal_x,position_portal_y, position_portal_z){
@@ -51,20 +52,39 @@ export function load_world_gltf(scene, camera, path_gltf_world, start_position_x
     } );
   }
 
-export function load_object_gltf(scene, camera, path_gltf_object,
+function dumpObject(obj, lines = [], isLast = true, prefix = '') {
+  const localPrefix = isLast ? '└─' : '├─';
+  lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
+  const newPrefix = prefix + (isLast ? '  ' : '│ ');
+  const lastNdx = obj.children.length - 1;
+  obj.children.forEach((child, ndx) => {
+    const isLast = ndx === lastNdx;
+    dumpObject(child, lines, isLast, newPrefix);
+  });
+  return lines;
+}
+
+export function load_object_gltf(scene, camera, name, print_tree, path_gltf_object,
                                 start_position_x, start_position_y, start_position_z,
                                 start_rotation_x, start_rotation_y, start_rotation_z){
   var loader = new GLTFLoader();
   loader.load( path_gltf_object, function ( gltf ) {
-    var dragonModel = gltf.scene;
-    scene.add( dragonModel );
+    var objModel = gltf.scene;
+    scene.add( objModel );
+    objModel.name = name;
 
-    dragonModel.position.x = start_position_x;
-    dragonModel.position.y = start_position_y;
-    dragonModel.position.z = start_position_z;
-    dragonModel.rotation.x = THREE.Math.degToRad(start_rotation_x);
-    dragonModel.rotation.y = THREE.Math.degToRad(start_rotation_y);
-    dragonModel.rotation.z = THREE.Math.degToRad(start_rotation_z);
+    // Print the tree of the model, if needed
+    if (print_tree){
+      console.log(dumpObject(objModel).join('\n'));
+    }
+
+    objModel.position.x = start_position_x;
+    objModel.position.y = start_position_y;
+    objModel.position.z = start_position_z;
+    objModel.rotation.x = THREE.Math.degToRad(start_rotation_x);
+    objModel.rotation.y = THREE.Math.degToRad(start_rotation_y);
+    objModel.rotation.z = THREE.Math.degToRad(start_rotation_z);
+
 
     }, undefined, function ( error ) {
 
