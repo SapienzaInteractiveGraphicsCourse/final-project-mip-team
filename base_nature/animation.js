@@ -1,9 +1,8 @@
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
-import {load_world,load_object_gltf} from '../common_functions.js';
+import {load_object, dumpObject} from '../common_functions.js';
 
 var renderer, scene, camera;
-var objects = [];
-var modelId;
+var name_enemy = "enemy";
 function init(){
     //Create the renderer
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -50,13 +49,24 @@ function init(){
     //
 
     //Loaders
-    modelId = load_world(scene,camera,objects,'./enemy2.obj','./enemy2.mtl',0,0,20);
+    load_object(scene,name_enemy,'./woodsman.obj','./woodsman.mtl',0,-2,-15,true);
   }
 
     //Animation
     var animate = function () {
     requestAnimationFrame(animate);
-    if(scene.children[modelId]) scene.children[modelId].rotation.y += 0.05;
+    if (scene.getObjectByName(name_enemy)) {
+      var Model = scene.getObjectByName(name_enemy);
+      var ArmDx = Model.getObjectByName('ArmDX');
+      if(ArmDx) {
+        /*if (ArmDx.rotation.x > -1.2){
+          ArmDx.rotation.x -= 0.005;
+          if( ArmDx.rotation.x < -0.2) ArmDx.position.y += 0.01;
+          ArmDx.position.z += 0.01;
+        }*/
+        ArmDx.rotation.y += 0.05
+      }
+    }
     renderer.render(scene, camera);
     }
     init();

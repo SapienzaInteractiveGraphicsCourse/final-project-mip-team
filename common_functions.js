@@ -3,7 +3,6 @@ import { OBJLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/
 import { MTLLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/MTLLoader.js';
 import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders/GLTFLoader.js';
 
-var objModel;
 
 // funzione da rivedere
 export function change_world(position_portal_x,position_portal_y, position_portal_z){
@@ -31,8 +30,32 @@ export function load_world(scene, camera, objects,path_obj_world, path_mtl_world
         scene.add(object);
       },onProgress,onError);
     });
-    // will be useful for animations
-  return scene.children.length
+}
+
+export function load_object(scene, name, path_obj_world, path_mtl_world, start_position_x, start_position_y, start_position_z, print_tree = false){
+  var loader = new OBJLoader();
+  var mtlLoader = new MTLLoader();
+  new Promise((resolve) => {
+      mtlLoader.load(path_mtl_world, (materials) => {
+        resolve(materials);
+      });
+    })
+    .then((materials) => {
+      materials.preload();
+      loader.setMaterials(materials);
+      loader.load(path_obj_world, (object) => {
+        var objModel = object;
+        objModel.position.x = start_position_x;
+        objModel.position.y = start_position_y;
+        objModel.position.z = start_position_z;
+        // Print the tree of the model, if needed
+        if (print_tree){
+          console.log(dumpObject(objModel).join('\n'));
+        }
+        objModel.name = name;
+        scene.add(objModel);
+      },onProgress,onError);
+    });
 }
 
 // funzione per fare il load del mondo
@@ -52,7 +75,7 @@ export function load_world_gltf(scene, camera, path_gltf_world, start_position_x
     } );
   }
 
-function dumpObject(obj, lines = [], isLast = true, prefix = '') {
+export function dumpObject(obj, lines = [], isLast = true, prefix = '') {
   const localPrefix = isLast ? '└─' : '├─';
   lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
   const newPrefix = prefix + (isLast ? '  ' : '│ ');
