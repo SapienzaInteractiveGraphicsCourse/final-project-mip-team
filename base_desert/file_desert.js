@@ -13,7 +13,7 @@ var prevTime = performance.now();
 var velocity = new THREE.Vector3();
 var direction = new THREE.Vector3();
 
-var gunModel;
+var lightOnOff = false;
 
 function controller(){
 	controls = new PointerLockControls( camera, document.body );
@@ -46,7 +46,6 @@ function controller(){
 
 function motion(){
 	if ( controls.isLocked === true ) {
-
 		raycaster.ray.origin.copy( controls.getObject().position );
 		raycaster.ray.origin.y -= 10;
 
@@ -87,12 +86,13 @@ function motion(){
 	}
 }
 
-//Animation
+// Animation
 var animate = function () {
 	requestAnimationFrame( animate );
 
 	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
 	motion();
+	
 	renderer.render(scene, camera);
 }
 
@@ -108,7 +108,8 @@ function init(){
 	//Create the scene
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
-	/* Lights */
+	
+	// Lights
 	var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
 	dirLight.color.setHSL( 0.1, 1, 0.95 );
 	dirLight.position.set( - 1, 1.75, 1 );
@@ -137,10 +138,10 @@ function init(){
 	var lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
 	scene.add( lightAmbient );
 
-	//Camera
+	// Camera
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 1000);
 
-	//Loaders
+	// Add desert
 	load_world(scene, camera, objects, './desert.obj', './desert.mtl', -8, 0.6, 0);
 	camera.rotation.y = -1.57;
 	
@@ -149,6 +150,25 @@ function init(){
 	
 	// Add gun
 	load_object_gltf(scene, camera, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
+	
+	
+	document.getElementById("lightOnOff").onclick = function() {
+        lightOnOff = !lightOnOff;
+		console.log(lightOnOff);
+		if(lightOnOff) {
+			scene.remove( dirLight );
+			scene.remove( lightAmbient );
+			scene.background = new THREE.Color( 0x175082 ); // sfondo per avere effetto cielo di notte
+			// Add spotlight
+			load_object_gltf(scene, camera, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
+		}
+		else {
+			scene.add( dirLight );
+			scene.add( lightAmbient );
+			scene.remove(scene.getObjectByName('spot'));
+			scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
+		}
+    };
 	
 	controller();
 }
