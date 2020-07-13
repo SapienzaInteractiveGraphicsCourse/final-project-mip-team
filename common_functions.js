@@ -11,7 +11,7 @@ export function change_world(position_portal_x,position_portal_y, position_porta
   }
 }
 
-export function load_world(scene, camera, objects,path_obj_world, path_mtl_world, start_position_x, start_position_y, start_position_z){
+export function load_world(scene, camera, path_obj_world, path_mtl_world, start_position_x, start_position_y, start_position_z){
   var loader = new OBJLoader();
   var mtlLoader = new MTLLoader();
   camera.position.x = start_position_x;
@@ -26,34 +26,7 @@ export function load_world(scene, camera, objects,path_obj_world, path_mtl_world
       materials.preload();
       loader.setMaterials(materials);
       loader.load(path_obj_world, (object) => {
-        objects.push(object);
         scene.add(object);
-      },onProgress,onError);
-    });
-}
-
-export function load_object(scene, name, path_obj_world, path_mtl_world, start_position_x, start_position_y, start_position_z, print_tree = false){
-  var loader = new OBJLoader();
-  var mtlLoader = new MTLLoader();
-  new Promise((resolve) => {
-      mtlLoader.load(path_mtl_world, (materials) => {
-        resolve(materials);
-      });
-    })
-    .then((materials) => {
-      materials.preload();
-      loader.setMaterials(materials);
-      loader.load(path_obj_world, (object) => {
-        var objModel = object;
-        objModel.position.x = start_position_x;
-        objModel.position.y = start_position_y;
-        objModel.position.z = start_position_z;
-        // Print the tree of the model, if needed
-        if (print_tree){
-          console.log(dumpObject(objModel).join('\n'));
-        }
-        objModel.name = name;
-        scene.add(objModel);
       },onProgress,onError);
     });
 }
@@ -87,7 +60,7 @@ export function dumpObject(obj, lines = [], isLast = true, prefix = '') {
   return lines;
 }
 
-export function load_object_gltf(scene, camera, name, print_tree, path_gltf_object,
+export function load_object_gltf(scene, name, print_tree, path_gltf_object,
                                 start_position_x, start_position_y, start_position_z,
                                 start_rotation_x, start_rotation_y, start_rotation_z){
   var loader = new GLTFLoader();
@@ -95,26 +68,31 @@ export function load_object_gltf(scene, camera, name, print_tree, path_gltf_obje
     var objModel = gltf.scene;
     scene.add( objModel );
     objModel.name = name;
-
     // Print the tree of the model, if needed
     if (print_tree){
       console.log(dumpObject(objModel).join('\n'));
     }
-
     objModel.position.x = start_position_x;
     objModel.position.y = start_position_y;
     objModel.position.z = start_position_z;
     objModel.rotation.x = THREE.Math.degToRad(start_rotation_x);
     objModel.rotation.y = THREE.Math.degToRad(start_rotation_y);
     objModel.rotation.z = THREE.Math.degToRad(start_rotation_z);
+    }, onProgress, onError);
 
+}
 
-    }, undefined, function ( error ) {
+export function delete_lights(scene,directional,ambient){
+  scene.remove(directional);
+  scene.remove(ambient);
+  scene.background = new THREE.Color( 0x175082 );
+}
 
-        console.error( error );
-
-    } );
-
+export function add_lights(scene,directional,ambient,spotlight = null){
+  scene.add( directional);
+  scene.add( ambient );
+  scene.remove(spotlight);
+  scene.background = new THREE.Color( 0x74D7FF );
 }
 
 
