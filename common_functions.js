@@ -75,6 +75,8 @@ export function load_object_gltf(scene, name, print_tree, path_gltf_object,
     objModel.position.x = start_position_x;
     objModel.position.y = start_position_y;
     objModel.position.z = start_position_z;
+    objModel.initial_position = {x:start_position_x,y:start_position_y,z:start_position_z}
+    objModel.initial_rotation = {x:THREE.Math.degToRad(start_rotation_x),y:THREE.Math.degToRad(start_rotation_y),z:THREE.Math.degToRad(start_rotation_z)}
     objModel.rotation.x = THREE.Math.degToRad(start_rotation_x);
     objModel.rotation.y = THREE.Math.degToRad(start_rotation_y);
     objModel.rotation.z = THREE.Math.degToRad(start_rotation_z);
