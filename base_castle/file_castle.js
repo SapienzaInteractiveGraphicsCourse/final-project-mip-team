@@ -15,6 +15,8 @@
     var direction = new THREE.Vector3();
 
     var dragonModel;
+    var alreadyLoaded = false;
+    var tween, tween2;
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -166,12 +168,24 @@
       requestAnimationFrame( animate );
 
       // Check if the object 'dragon' is loaded
-      if (scene.getObjectByName('dragon')) {
+      if (scene.getObjectByName('dragon') && alreadyLoaded == false) {
+        alreadyLoaded = true;
         var dragonModel = scene.getObjectByName('dragon');
 
         // First animation
         var Torso = dragonModel.getObjectByName('Torso');
-        if (Torso) Torso.rotation.y += 0.05;
+
+        //Create a tween object
+        tween = new createjs.Tween(Torso.position);
+        tween2 = new createjs.Tween(Torso.rotation);
+      }
+
+      // If the model is loaded, the tween is created too and we can use it
+      if (alreadyLoaded == true) {
+        // Animate the tween with for the x, y and z axis for 10s (10K ms)
+        tween.to({x: 100, y: 100, z: 100}, 10000);
+        // Meanwhile, another tween...
+        tween2.to({x: THREE.Math.degToRad(10)}, 10000);
       }
 
       motion();
