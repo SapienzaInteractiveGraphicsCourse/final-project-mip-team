@@ -1,13 +1,16 @@
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
-import {load_object, dumpObject} from '../common_functions.js';
+import {load_object_gltf} from '../common_functions.js';
 
 var renderer, scene, camera;
 var name_enemy = "enemy";
+var tween_arm;
+var tween_leg_dx;
+var initial_position_arm = null;
 function init(){
     //Create the renderer
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( window.innerWidth, window.innerHeight);
     renderer.outputEncoding = THREE.GammaEncoding;
     document.body.appendChild( renderer.domElement );
 
@@ -49,7 +52,7 @@ function init(){
     //
 
     //Loaders
-    load_object(scene,name_enemy,'./woodsman.obj','./woodsman.mtl',0,-2,-15,true);
+    load_object_gltf(scene,camera, name_enemy,true,'./woodsman.gltf',0,-2,-15,0,45,0);
   }
 
     //Animation
@@ -58,16 +61,27 @@ function init(){
     if (scene.getObjectByName(name_enemy)) {
       var Model = scene.getObjectByName(name_enemy);
       var ArmDx = Model.getObjectByName('ArmDX');
+      var LegDx = Model.getObjectByName('LegDX');
       if(ArmDx) {
-        /*if (ArmDx.rotation.x > -1.2){
-          ArmDx.rotation.x -= 0.005;
-          if( ArmDx.rotation.x < -0.2) ArmDx.position.y += 0.01;
-          ArmDx.position.z += 0.01;
-        }*/
-        ArmDx.rotation.y += 0.05
+        tween_arm = {position:new createjs.Tween(ArmDx.position),rotation:new createjs.Tween(ArmDx.rotation)};
+        prepare_shot(tween_arm)
+      }
+      if(LegDx){
+        tween_leg_dx = {position:new createjs.Tween(LegDx.position),rotation:new createjs.Tween(LegDx.rotation)};
+        //walk(tween_leg_dx)
       }
     }
     renderer.render(scene, camera);
     }
+    
+    function prepare_shot(tween){
+      tween.rotation.to({x: THREE.Math.degToRad(-70), z: THREE.Math.degToRad(180)}, 1000);
+      tween.position.to({x: -0.9, y: 0.4, z: 0.8},1000);
+    }
+    // da rivedere
+    function walk(tween_dx){
+      tween_dx.rotation.to({x: THREE.Math.degToRad(-45)},1000);
+    }
+
     init();
     animate();
