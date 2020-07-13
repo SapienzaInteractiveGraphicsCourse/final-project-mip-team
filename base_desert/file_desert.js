@@ -1,7 +1,7 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world, onKeyUp, onKeyDown, load_object_gltf} from '../common_functions.js';
+import {load_world, onKeyUp, onKeyDown, load_object_gltf, weapon_movement} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
@@ -12,6 +12,8 @@ var movements = [false,false,false,false,false];
 var prevTime = performance.now();
 var velocity = new THREE.Vector3();
 var direction = new THREE.Vector3();
+
+var gunModel;
 
 function controller(){
 	controls = new PointerLockControls( camera, document.body );
@@ -87,9 +89,11 @@ function motion(){
 
 //Animation
 var animate = function () {
-  requestAnimationFrame( animate );
-  motion();
-  renderer.render(scene, camera);
+	requestAnimationFrame( animate );
+
+	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
+	motion();
+	renderer.render(scene, camera);
 }
 
 
@@ -141,7 +145,10 @@ function init(){
 	camera.rotation.y = -1.57;
 	
 	// Add enemy
-	load_object_gltf(scene, camera, './enemy/cowboy.gltf', 0, 0.2, 0, 0, -90, 0);
+	load_object_gltf(scene, camera, 'cowboy', false, './enemy/cowboy.gltf', 0, 0.2, 0, 0, -90, 0);
+	
+	// Add gun
+	load_object_gltf(scene, camera, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
 	
 	controller();
 }

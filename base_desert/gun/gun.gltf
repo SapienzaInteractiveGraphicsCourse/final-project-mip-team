@@ -1,0 +1,121 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.2.75",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "gun",
+            "rotation" : [
+                0.5194999575614929,
+                -0.5194998979568481,
+                0.47970813512802124,
+                0.4797080159187317
+            ],
+            "scale" : [
+                0.0029789588879793882,
+                0.0029789588879793882,
+                0.0029789588879793882
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "wire_087225143",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.037409886717796326,
+                    0.019199488684535027,
+                    0.013507677242159843,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "gun",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1
+                    },
+                    "indices" : 2,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 5278,
+            "max" : [
+                25.884624481201172,
+                4.878190517425537,
+                22.337900161743164
+            ],
+            "min" : [
+                -41.87787628173828,
+                -4.871809482574463,
+                -9.649599075317383
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 5278,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5123,
+            "count" : 19272,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 63336,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 63336,
+            "byteOffset" : 63336
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 38544,
+            "byteOffset" : 126672
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 165216,
+            "uri" : "gun.bin"
+        }
+    ]
+}
