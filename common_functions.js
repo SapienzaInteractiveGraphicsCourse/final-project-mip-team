@@ -177,11 +177,11 @@ var onError = function (xhr) { };
 export function weapon_movement(scene, camera, name, pos_x, pos_y, pos_z) {
 	// To move the gun together with the camera, but translated of the right position
 	if (scene.getObjectByName(name)) {
-		var gunModel = scene.getObjectByName(name);
-		gunModel.position.copy( camera.position );
-		gunModel.rotation.copy( camera.rotation );
-		gunModel.translateX( pos_x );
-		gunModel.translateY( pos_y );
-		gunModel.translateZ( pos_z );
+		var weaponModel = scene.getObjectByName(name);
+		weaponModel.position.copy( camera.position );
+		weaponModel.rotation.copy( camera.rotation );
+		weaponModel.translateX( pos_x );
+		weaponModel.translateY( pos_y );
+		weaponModel.translateZ( pos_z );
 	}
 }
