@@ -16,7 +16,7 @@
 
     var dragonModel;
     var alreadyLoaded = false;
-    var tween, tween2;
+    var dragonTweens = [];
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -172,20 +172,19 @@
         alreadyLoaded = true;
         var dragonModel = scene.getObjectByName('dragon');
 
-        // First animation
-        var Torso = dragonModel.getObjectByName('Torso');
-
-        //Create a tween object
-        tween = new createjs.Tween(Torso.position);
-        tween2 = new createjs.Tween(Torso.rotation);
+        //Create a tween objects
+        dragonTweens['wing_left_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_left').rotation);
+        dragonTweens['wing_right_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_right').rotation);
+        dragonTweens['torso_position'] = new createjs.Tween.get(dragonModel.getObjectByName('torso').position);
       }
 
       // If the model is loaded, the tween is created too and we can use it
       if (alreadyLoaded == true) {
-        // Animate the tween with for the x, y and z axis for 10s (10K ms)
-        tween.to({x: 100, y: 100, z: 100}, 10000);
-        // Meanwhile, another tween...
-        tween2.to({x: THREE.Math.degToRad(10)}, 10000);
+        // Animate the tween z axis for 2s (2K ms) and when it's done, do the same in the opposite direction.
+        dragonTweens['wing_left_rotation'].to({z: THREE.Math.degToRad(-6)}, 2000).to({z: THREE.Math.degToRad(6)}, 2000);
+        dragonTweens['wing_right_rotation'].to({z: THREE.Math.degToRad(-6)}, 2000).to({z: THREE.Math.degToRad(6)}, 2000);
+        // Meanwhile, move the torso in the y direction
+        dragonTweens['torso_position'].to({y: 2.5}, 2000).to({y: -2.5}, 2000);
       }
 
       motion();

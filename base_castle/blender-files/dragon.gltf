@@ -485,7 +485,7 @@
                 21
             ],
             "mesh" : 21,
-            "name" : "Torso",
+            "name" : "torso",
             "rotation" : [
                 0.6757870316505432,
                 0,
