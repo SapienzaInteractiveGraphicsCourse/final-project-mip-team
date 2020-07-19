@@ -15,6 +15,11 @@ var direction = new THREE.Vector3();
 
 var lightOnOff = false;
 
+var cowboyModel;
+var alreadyLoaded = false;
+var cowboyTweens = [];
+
+
 function controller(){
 	controls = new PointerLockControls( camera, document.body );
 
@@ -86,16 +91,6 @@ function motion(){
 	}
 }
 
-// Animation
-var animate = function () {
-	requestAnimationFrame( animate );
-
-	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
-	motion();
-	
-	renderer.render(scene, camera);
-}
-
 
 function init(){
 	//Create the renderer
@@ -142,25 +137,24 @@ function init(){
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 1000);
 
 	// Add desert
-	load_world(scene, camera, objects, './desert.obj', './desert.mtl', -8, 0.6, 0);
+	load_world(scene, camera, './desert.obj', './desert.mtl', -8, 0.6, 0);
 	camera.rotation.y = -1.57;
 	
 	// Add enemy
-	load_object_gltf(scene, camera, 'cowboy', false, './enemy/cowboy.gltf', 0, 0.2, 0, 0, -90, 0);
+	load_object_gltf(scene, 'cowboy', true, './enemy/cowboy2.gltf', 0, 0.2, 0, 0, -90, 0);
 	
 	// Add gun
-	load_object_gltf(scene, camera, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
+	load_object_gltf(scene, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
 	
 	
 	document.getElementById("lightOnOff").onclick = function() {
         lightOnOff = !lightOnOff;
-		console.log(lightOnOff);
 		if(lightOnOff) {
 			scene.remove( dirLight );
 			scene.remove( lightAmbient );
 			scene.background = new THREE.Color( 0x175082 ); // sfondo per avere effetto cielo di notte
 			// Add spotlight
-			load_object_gltf(scene, camera, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
+			load_object_gltf(scene, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
 		}
 		else {
 			scene.add( dirLight );
@@ -171,6 +165,66 @@ function init(){
     };
 	
 	controller();
+}
+
+
+// Animation
+var animate = function () {
+	requestAnimationFrame( animate );
+
+	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
+
+	// Codice animazione cowboy
+	// Check if the object 'cowboy' is loaded
+	if (scene.getObjectByName('cowboy') && alreadyLoaded == false) {
+		alreadyLoaded = true;
+		var cowboyModel = scene.getObjectByName('cowboy');
+
+		//Create a tween objects
+		cowboyTweens['spallaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaDX').rotation);
+		cowboyTweens['spallaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaSX').rotation);
+		
+		cowboyTweens['petto_position'] = new createjs.Tween.get(cowboyModel.getObjectByName('petto').position);
+		
+		cowboyTweens['ancaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaDX').rotation);
+		cowboyTweens['ancaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaSX').rotation);
+		
+		cowboyTweens['ginocchioDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ginocchioDX').rotation);
+		cowboyTweens['ginocchioSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ginocchioSX').rotation);
+		
+		cowboyTweens['piedeDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeDX').rotation);
+		cowboyTweens['piedeSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeSX').rotation);
+	}
+
+	// If the model is loaded, the tween is created too and we can use it
+	if (alreadyLoaded == true) {
+		// Animate the tween z axis for 1s (1K ms) and when it's done, do the same in the opposite direction.
+		cowboyTweens['spallaDX_rotation'].to({x: THREE.Math.degToRad(20)}, 1000).to({x: THREE.Math.degToRad(-20)}, 1000);
+		cowboyTweens['spallaSX_rotation'].to({x: THREE.Math.degToRad(-20)}, 1000).to({x: THREE.Math.degToRad(20)}, 1000);
+		
+		cowboyTweens['ancaDX_rotation'].to({x: THREE.Math.degToRad(-115)}, 1000).to({x: THREE.Math.degToRad(-80)}, 1000);
+		cowboyTweens['ancaSX_rotation'].to({x: THREE.Math.degToRad(-80)}, 1000).to({x: THREE.Math.degToRad(-115)}, 1000);
+		
+		cowboyTweens['ginocchioDX_rotation'].to({x: THREE.Math.degToRad(0)}, 1000).to({x: THREE.Math.degToRad(25)}, 1000);
+		cowboyTweens['ginocchioSX_rotation'].to({x: THREE.Math.degToRad(25)}, 1000).to({x: THREE.Math.degToRad(0)}, 1000);
+		
+		cowboyTweens['piedeDX_rotation'].to({x: THREE.Math.degToRad(10)}, 1000).to({x: THREE.Math.degToRad(-10)}, 1000);
+		cowboyTweens['piedeSX_rotation'].to({x: THREE.Math.degToRad(-10)}, 1000).to({x: THREE.Math.degToRad(10)}, 1000);
+		
+		// Meanwhile, move the cowboy (petto is the root) in the x and z directions
+		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 0, z: -1}, 12000);
+	}
+	// fine animazione cowboy
+	
+	
+	// When the camera passes the portail, redirect to the base nature
+	if((camera.position.x >= 4) && (camera.position.z <= -3)) {
+		window.location.replace("/base_nature/index_nature.html");
+	}
+	
+	motion();
+	
+	renderer.render(scene, camera);
 }
 
 init();
