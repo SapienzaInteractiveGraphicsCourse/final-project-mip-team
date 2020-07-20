@@ -1,7 +1,7 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -154,9 +154,10 @@
       camera.position.y = 3;
 
       //Load environment
-      load_world_gltf(scene, camera, 'blender-files/source/tutorial_castle_town.gltf',-10,3,50);
+      load_world_gltf(scene, camera, 'world/source/tutorial_castle_town.gltf',-10,3,50);
       //Load dragon
-      load_object_gltf(scene, camera, 'dragon', true, 'blender-files/dragon.gltf', -8, 18, -60, 20, 0, 0);
+      load_object_gltf(scene, 'dragon', true, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
+      load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
 
       controller();
     }
@@ -173,20 +174,21 @@
         var dragonModel = scene.getObjectByName('dragon');
 
         //Create a tween objects
-        dragonTweens['wing_left_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_left').rotation);
-        dragonTweens['wing_right_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_right').rotation);
+        dragonTweens['wing_left_joint_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_left_joint').rotation);
+        dragonTweens['wing_right_joint_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_right_joint').rotation);
         dragonTweens['torso_position'] = new createjs.Tween.get(dragonModel.getObjectByName('torso').position);
       }
 
       // If the model is loaded, the tween is created too and we can use it
       if (alreadyLoaded == true) {
         // Animate the tween z axis for 2s (2K ms) and when it's done, do the same in the opposite direction.
-        dragonTweens['wing_left_rotation'].to({z: THREE.Math.degToRad(-6)}, 2000).to({z: THREE.Math.degToRad(6)}, 2000);
-        dragonTweens['wing_right_rotation'].to({z: THREE.Math.degToRad(-6)}, 2000).to({z: THREE.Math.degToRad(6)}, 2000);
+        dragonTweens['wing_left_joint_rotation'].to({y: THREE.Math.degToRad(12)}, 2000).to({y: THREE.Math.degToRad(-12)}, 2000);
+        dragonTweens['wing_right_joint_rotation'].to({y: THREE.Math.degToRad(-12)}, 2000).to({y: THREE.Math.degToRad(12)}, 2000);
         // Meanwhile, move the torso in the y direction
         dragonTweens['torso_position'].to({y: 2.5}, 2000).to({y: -2.5}, 2000);
       }
 
+      weapon_movement(scene, camera, 'crossbow', -0.9, -4, -6);
       motion();
       renderer.render(scene, camera);
     }
