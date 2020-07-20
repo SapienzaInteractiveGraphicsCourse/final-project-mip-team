@@ -90,7 +90,7 @@
 
         if ( controls.getObject().position.y < 10 ) {
           velocity.y = 0;
-          controls.getObject().position.y = 3;
+          controls.getObject().position.y = -17;
           movements[4] = true;
         }
         prevTime = time;
@@ -149,15 +149,13 @@
       //Camera
       camera = new THREE.PerspectiveCamera(35,
         window.innerWidth/window.innerHeight, 0.1, 1000);
-      camera.position.z = 50;
-      camera.position.x = -10;
-      camera.position.y = 3;
 
-      //Load environment
-      load_world_gltf(scene, camera, 'world/source/tutorial_castle_town.gltf',-10,3,50);
-      //Load dragon
+      //Load environment: the y position should coincide with controls.getObject().position.y
+      load_world_gltf(scene, camera, 'world/source/tutorial_castle_town.gltf',-10,-17,50);
+      //Load other objects
       load_object_gltf(scene, 'dragon', true, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
       load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
+      load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
 
       controller();
     }
@@ -188,8 +186,8 @@
         dragonTweens['torso_position'].to({y: 2.5}, 2000).to({y: -2.5}, 2000);
       }
 
-      weapon_movement(scene, camera, 'crossbow', -0.9, -4, -6);
       motion();
+      weapon_movement(scene, camera, 'crossbow', -2.5, -3.5, -3.3);
       renderer.render(scene, camera);
     }
     init();
