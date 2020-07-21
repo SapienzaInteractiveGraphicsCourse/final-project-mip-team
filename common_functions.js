@@ -165,3 +165,55 @@ export function weapon_movement(scene, camera, name, pos_x, pos_y, pos_z) {
 		weaponModel.translateZ( pos_z );
 	}
 }
+
+export function check_collisions(controls, camera, scene, collisions, collisionDistance){
+  // Initialize 4 raycasters, one for each direction of the y-plane 
+  var raycasters = [];
+  raycasters['front'] = new THREE.Raycaster();
+  raycasters['back'] = new THREE.Raycaster();
+  raycasters['left'] = new THREE.Raycaster();
+  raycasters['right'] = new THREE.Raycaster();
+
+  // Set the origin of the raycasters at the camera position
+  var raycasterOrigin = new THREE.Vector3(controls.getObject().position.x,controls.getObject().position.y,controls.getObject().position.z);
+
+  // Define the direction of the camera (this is equal to the front raycaster direction)
+  var worldDirection = new THREE.Vector3();
+  camera.getWorldDirection(worldDirection);
+
+  // Array containing intersection elements from all the raycasters
+  var intersects = [];
+
+  // Front collisions
+  raycasters['front'].set(raycasterOrigin, worldDirection);
+  intersects['front'] = raycasters['front'].intersectObjects( scene.children, true );
+  // Back collisions
+  raycasters['back'].set(raycasterOrigin, new THREE.Vector3(worldDirection.x, worldDirection.y, -1*worldDirection.z));
+  intersects['back'] = raycasters['back'].intersectObjects( scene.children, true );
+  // Right collisions, the direction is computed from the front direction:
+  // perpendicular clockwise: https://gamedev.stackexchange.com/questions/70075/how-can-i-find-the-perpendicular-to-a-2d-vector
+  raycasters['right'].set(raycasterOrigin, new THREE.Vector3(-worldDirection.z, worldDirection.y, worldDirection.x));
+  intersects['right'] = raycasters['right'].intersectObjects( scene.children, true );
+  // Left collisions, the direction is computed from the front direction:
+  // Perpendicular counter-clockwise
+  raycasters['left'].set(raycasterOrigin, new THREE.Vector3(worldDirection.z, worldDirection.y, -worldDirection.x));
+  intersects['left'] = raycasters['left'].intersectObjects( scene.children, true );
+
+  // For each intersections (front, back, right, left)
+  for (var key in intersects){
+    // For each element that intersect the raycaster
+    for (var i = 0; i < intersects[key].length; i++){
+      // Take the first element in the list that is close to the collision distance
+      if (intersects[key][i].distance < collisionDistance) {
+        collisions[key] = 0;
+        break;
+      }
+      // If the distance becomes larger and before and before it was a collision, unlock that direction
+      else if (intersects[key][i].distance >= collisionDistance && collisions[key] == 0) {
+        console.log(i);
+        collisions[key] = 1;
+        break;
+      }
+    }
+  }
+}

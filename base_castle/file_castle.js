@@ -1,7 +1,7 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -17,6 +17,13 @@
     var dragonModel;
     var alreadyLoaded = false;
     var dragonTweens = [];
+
+    var collisions = [];
+    collisions['front'] = 1;
+    collisions['back'] = 1;
+    collisions['left'] = 1;
+    collisions['right'] = 1;
+    var collisionDistance = 10;
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -59,7 +66,6 @@
         raycaster.ray.origin.y -= 10;
 
         var intersections = raycaster.intersectObjects( objects );
-
         var onObject = intersections.length > 0;
 
         var time = performance.now();
@@ -70,8 +76,9 @@
 
         velocity.y -= 9.8 * 100.0 * delta;
 
-        direction.z = Number( movements[0] ) - Number( movements[1] );
-        direction.x = Number( movements[3] ) - Number( movements[2] );
+        // Collisions[x] is 0 when that direction is forbidden, otherwise it's 1 and all works fine
+        direction.z = collisions['front']*Number( movements[0] ) - collisions['back']*Number( movements[1] );
+        direction.x = collisions['right']*Number( movements[3] ) - collisions['left']*Number( movements[2] );
         direction.normalize();
 
         if ( movements[0] || movements[1] ) velocity.z -= direction.z * 400.0 * delta;
@@ -153,7 +160,7 @@
       //Load environment: the y position should coincide with controls.getObject().position.y
       load_world_gltf(scene, camera, 'world/source/tutorial_castle_town.gltf',-10,-17,50);
       //Load other objects
-      load_object_gltf(scene, 'dragon', true, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
+      load_object_gltf(scene, 'dragon', false, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
       load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
       load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
 
@@ -188,6 +195,7 @@
 
       motion();
       weapon_movement(scene, camera, 'crossbow', -2.5, -3.5, -3.3);
+      check_collisions(controls, camera, scene, collisions, collisionDistance);
       renderer.render(scene, camera);
     }
     init();
