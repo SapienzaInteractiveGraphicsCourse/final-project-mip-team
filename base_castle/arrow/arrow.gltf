@@ -1,0 +1,174 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.2.75",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "bolt_low__0",
+            "rotation" : [
+                0.48347440361976624,
+                0.49895772337913513,
+                -0.49740269780158997,
+                0.5195044279098511
+            ],
+            "scale" : [
+                0.4636664390563965,
+                0.4636664390563965,
+                0.4636664390563965
+            ],
+            "translation" : [
+                0.0009286738932132721,
+                0.013226538896560669,
+                0.381486713886261
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "Scene_-_Root.001",
+            "normalTexture" : {
+                "index" : 0,
+                "texCoord" : 0
+            },
+            "occlusionTexture" : {
+                "index" : 1,
+                "texCoord" : 0
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 2,
+                    "texCoord" : 0
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 1,
+                    "texCoord" : 0
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "bolt_low__0",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        },
+        {
+            "source" : 1
+        },
+        {
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Scene_-_Root_normal",
+            "uri" : "Scene_-_Root_normal.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Scene_-_Root_metallicRoughness",
+            "uri" : "Scene_-_Root_metallicRoughness.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Scene_-_Root_baseColor",
+            "uri" : "Scene_-_Root_baseColor.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 92,
+            "max" : [
+                0.8252930641174316,
+                0.04644881188869476,
+                0.016015946865081787
+            ],
+            "min" : [
+                -0.2315419614315033,
+                -0.04778677225112915,
+                -0.014022395014762878
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 92,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 92,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 330,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 1104,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 1104,
+            "byteOffset" : 1104
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 736,
+            "byteOffset" : 2208
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 660,
+            "byteOffset" : 2944
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 3604,
+            "uri" : "arrow.bin"
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-    //Import library and loaders easiest way: link to unpkg website
+worldDirection2    //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
     import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
@@ -24,6 +24,13 @@
     collisions['left'] = 1;
     collisions['right'] = 1;
     var collisionDistance = 10;
+
+    var arrowPosition;
+    var arrowLoaded = false;
+    var toPosX, toPosY, toPosZ;
+    var worldDirection2 = new THREE.Vector3();
+    var intersect, rayCasterOrigin2;
+    var raycaster2 = new THREE.Raycaster();
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -194,7 +201,56 @@
       }
 
       motion();
-      weapon_movement(scene, camera, 'crossbow', -2.5, -3.5, -3.3);
+      weapon_movement(scene, camera, 'crossbow', 0.2, -0.3, -2);
+
+      // Inizio animazione proiettile (se si clicca x)
+    	camera.getWorldDirection(worldDirection2);
+    	rayCasterOrigin2 = new THREE.Vector3(controls.getObject().position.x, controls.getObject().position.y, controls.getObject().position.z);
+    	raycaster2.set(rayCasterOrigin2, worldDirection2);
+    	intersect = raycaster2.intersectObjects( scene.children, true );
+
+      if (typeof intersect[0] !== 'undefined') {
+    		if (movements[5] == true) {
+    			load_object_gltf(scene, 'arrow', false, 'arrow/arrow.gltf', 0, 0, 0, 0, 0, 0);
+    			// To move the crossbow together with the camera, but translated of the right position
+    			if (scene.getObjectByName('arrow')) {
+    				var arrowModel = scene.getObjectByName('arrow');
+    				var weaponModel = scene.getObjectByName('crossbow');
+    				arrowModel.position.copy( weaponModel.position );
+    				arrowModel.rotation.copy( weaponModel.rotation );
+    				arrowModel.translateX( 0 );
+    				arrowModel.translateY( 0 );
+    				arrowModel.translateZ( 0 );
+    			}
+    			movements[5] = false;
+    		}
+    		if (arrowModel && !arrowLoaded) {
+    			arrowPosition = new createjs.Tween.get(arrowModel.position);
+    			toPosX = intersect[0].point.x;
+    			toPosY = intersect[0].point.y;
+    			toPosZ = intersect[0].point.z;
+    			arrowLoaded = true;
+    		}
+    		if (scene.getObjectByName('arrow') && arrowLoaded) {
+    			arrowPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 3000);
+    			if ((scene.getObjectByName('arrow').position.x == toPosX) &&
+    			(scene.getObjectByName('arrow').position.y == toPosY) &&
+    			(scene.getObjectByName('arrow').position.z == toPosZ)){
+            console.log(intersect[0].object.name);
+    				if((intersect[0].object.name !== 'Sphere001') &&
+    				(typeof (scene.getObjectByName('dragon')).getObjectByName(intersect[0].object.name) !== 'undefined')){
+    					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
+    					//scene.remove(scene.getObjectByName('dragon'));
+    					console.log('Preso');
+    				}
+    				scene.remove(scene.getObjectByName('arrow'));
+    				arrowLoaded = false;
+    			}
+    		}
+    	}
+    	// fine animazione proiettile
+
+
       check_collisions(controls, camera, scene, collisions, collisionDistance);
       renderer.render(scene, camera);
     }
