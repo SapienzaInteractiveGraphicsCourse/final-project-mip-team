@@ -1,13 +1,13 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world, onKeyUp, onKeyDown, load_object_gltf, weapon_movement} from '../common_functions.js';
+import {load_world, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
 var raycaster;
 
-var movements = [false,false,false,false,false];
+var movements = [false,false,false,false,false,false];
 
 var prevTime = performance.now();
 var velocity = new THREE.Vector3();
@@ -18,6 +18,19 @@ var lightOnOff = false;
 var cowboyModel;
 var alreadyLoaded = false;
 var cowboyTweens = [];
+var bulletPosition;
+var bulletLoaded = false;
+var toPosX, toPosY, toPosZ;
+var worldDirection = new THREE.Vector3();
+var intersect, raycasterOrigin;
+var raycaster2 = new THREE.Raycaster();
+
+var collisions = [];
+collisions['front'] = 1;
+collisions['back'] = 1;
+collisions['left'] = 1;
+collisions['right'] = 1;
+var collisionDistance = 1;
 
 
 function controller(){
@@ -66,9 +79,10 @@ function motion(){
 
 		velocity.y -= 9.8 * 100.0 * delta;
 
-		direction.z = Number( movements[0] ) - Number( movements[1] );
-		direction.x = Number( movements[3] ) - Number( movements[2] );
-		direction.normalize();
+		// Collisions[x] is 0 when that direction is forbidden, otherwise it's 1 and all works fine
+		direction.z = collisions['front']*Number( movements[0] ) - collisions['back']*Number( movements[1] );
+        direction.x = collisions['right']*Number( movements[3] ) - collisions['left']*Number( movements[2] );
+        direction.normalize();
 
 		if ( movements[0] || movements[1] ) velocity.z -= direction.z * 100.0 * delta; //400.0
 		if ( movements[2] || movements[3] ) velocity.x -= direction.x * 100.0 * delta; //400.0
@@ -141,7 +155,7 @@ function init(){
 	camera.rotation.y = -1.57;
 	
 	// Add enemy
-	load_object_gltf(scene, 'cowboy', true, './enemy/cowboy2.gltf', 0, 0.2, 0, 0, -90, 0);
+	load_object_gltf(scene, 'cowboy', true, './enemy/cowboy.gltf', 0, 0.2, 0, 0, -90, 0);
 	
 	// Add gun
 	load_object_gltf(scene, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
@@ -171,6 +185,12 @@ function init(){
 // Animation
 var animate = function () {
 	requestAnimationFrame( animate );
+	motion();
+	
+	// When the camera passes the portail, redirect to the base nature
+	if((camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
+		window.location.replace("/base_nature/index_nature.html");
+	}
 
 	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
 
@@ -195,7 +215,7 @@ var animate = function () {
 		cowboyTweens['piedeDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeDX').rotation);
 		cowboyTweens['piedeSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeSX').rotation);
 	}
-
+	
 	// If the model is loaded, the tween is created too and we can use it
 	if (alreadyLoaded == true) {
 		// Animate the tween z axis for 1s (1K ms) and when it's done, do the same in the opposite direction.
@@ -216,13 +236,56 @@ var animate = function () {
 	}
 	// fine animazione cowboy
 	
+
+	// Inizio animazione proiettile (se si clicca x)
+	camera.getWorldDirection(worldDirection);
+	raycasterOrigin = new THREE.Vector3(controls.getObject().position.x, controls.getObject().position.y, controls.getObject().position.z);
+	raycaster2.set(raycasterOrigin, worldDirection);
+	intersect = raycaster2.intersectObjects( scene.children, true );
+
 	
-	// When the camera passes the portail, redirect to the base nature
-	if((camera.position.x >= 4) && (camera.position.z <= -3)) {
-		window.location.replace("/base_nature/index_nature.html");
+	if (typeof intersect[0] !== 'undefined') {
+		if (movements[5] == true) {
+			load_object_gltf(scene, 'bullet', false, './gun/bullet.gltf', 0, 0, 0, 0, 0, 0);
+			// To move the gun together with the camera, but translated of the right position
+			if (scene.getObjectByName('bullet')) {
+				var bulletModel = scene.getObjectByName('bullet');
+				var weaponModel = scene.getObjectByName('gun');
+				bulletModel.position.copy( weaponModel.position );
+				bulletModel.rotation.copy( weaponModel.rotation );
+				bulletModel.translateX( 0 );
+				bulletModel.translateY( 0.028 );
+				bulletModel.translateZ( -0.15 );
+			}
+			movements[5] = false;
+		}
+		if (bulletModel && !bulletLoaded) {
+			bulletPosition = new createjs.Tween.get(bulletModel.position);
+			toPosX = intersect[0].point.x;
+			toPosY = intersect[0].point.y;
+			toPosZ = intersect[0].point.z;
+			bulletLoaded = true;
+		}
+		if (scene.getObjectByName('bullet') && bulletLoaded) {
+			bulletPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 1000);
+
+			if ((scene.getObjectByName('bullet').position.x == toPosX) && 
+			(scene.getObjectByName('bullet').position.y == toPosY) &&
+			(scene.getObjectByName('bullet').position.z == toPosZ)){
+				if((intersect[0].object.name !== 'Sphere001') && 
+				(typeof (scene.getObjectByName('cowboy')).getObjectByName(intersect[0].object.name) !== 'undefined')){
+					//console.log(scene.getObjectByName('cowboy').getObjectByName(intersect[0].object.name));
+					//scene.remove(scene.getObjectByName('cowboy'));
+					console.log('Preso');
+				}
+				scene.remove(scene.getObjectByName('bullet'));
+				bulletLoaded = false;
+			}
+		}
 	}
+	// fine animazione proiettile
 	
-	motion();
+	check_collisions(controls, camera, scene, collisions, collisionDistance);
 	
 	renderer.render(scene, camera);
 }

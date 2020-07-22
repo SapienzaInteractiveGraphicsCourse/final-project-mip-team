@@ -5,7 +5,7 @@ import { GLTFLoader } from 'https://unpkg.com/three@0.118.3/examples/jsm/loaders
 
 
 // funzione da rivedere
-export function change_world(position_portal_x,position_portal_y, position_portal_z){
+export function change_world(camera, position_portal_x,position_portal_y, position_portal_z){
   if (camera.position.x == position_portal_x && camera.position.y == position_portal_y && camera.position.z == position_portal_z){
     window.location.replace("../base_castle/index_castle.html");
   }
@@ -121,6 +121,9 @@ export function onKeyDown(event,movements,velocity) {
       if ( movements[4] === true ) velocity.y += 180;
       movements[4] = false;
       break;
+	case 88: // x
+	  movements[5] = true;
+	  break;
   }
 }
 
@@ -142,7 +145,9 @@ export function onKeyUp( event, movements ) {
     case 68: // d
       movements[3] = false;
       break;
-
+	case 88: // x
+	  movements[5] = false;
+	  break;
   }
 };
 
@@ -210,7 +215,6 @@ export function check_collisions(controls, camera, scene, collisions, collisionD
       }
       // If the distance becomes larger and before and before it was a collision, unlock that direction
       else if (intersects[key][i].distance >= collisionDistance && collisions[key] == 0) {
-        console.log(i);
         collisions[key] = 1;
         break;
       }
