@@ -1,7 +1,7 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
+import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
@@ -21,8 +21,8 @@ var cowboyTweens = [];
 var bulletPosition;
 var bulletLoaded = false;
 var toPosX, toPosY, toPosZ;
-var worldDirection = new THREE.Vector3();
-var intersect, raycasterOrigin;
+var worldDirection2 = new THREE.Vector3();
+var intersect, raycasterOrigin2;
 var raycaster2 = new THREE.Raycaster();
 
 var collisions = [];
@@ -30,7 +30,12 @@ collisions['front'] = 1;
 collisions['back'] = 1;
 collisions['left'] = 1;
 collisions['right'] = 1;
-var collisionDistance = 1;
+var collisionDistance = 0.4;
+
+var healthBarCharacter;
+var healthBarEnemy;
+var characterLifes = 10;
+var enemyLifes = 10;
 
 
 function controller(){
@@ -84,8 +89,8 @@ function motion(){
         direction.x = collisions['right']*Number( movements[3] ) - collisions['left']*Number( movements[2] );
         direction.normalize();
 
-		if ( movements[0] || movements[1] ) velocity.z -= direction.z * 100.0 * delta; //400.0
-		if ( movements[2] || movements[3] ) velocity.x -= direction.x * 100.0 * delta; //400.0
+		if ( movements[0] || movements[1] ) velocity.z -= direction.z * 40.0 * delta; //400.0
+		if ( movements[2] || movements[3] ) velocity.x -= direction.x * 40.0 * delta; //400.0
 
 		if ( onObject === true ) {
 		  velocity.y = Math.max( 0, velocity.y );
@@ -151,7 +156,8 @@ function init(){
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 1000);
 
 	// Add desert
-	load_world(scene, camera, './desert.obj', './desert.mtl', -8, 0.6, 0);
+	//load_world_gltf(scene, camera, './desert.obj', './desert.mtl', -8, 0.6, 0);
+	load_world_gltf(scene, camera, './desert.gltf', -8, 0.6, 0);
 	camera.rotation.y = -1.57;
 	
 	// Add enemy
@@ -177,6 +183,7 @@ function init(){
 			scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
 		}
     };
+	
 	
 	controller();
 }
@@ -238,9 +245,9 @@ var animate = function () {
 	
 
 	// Inizio animazione proiettile (se si clicca x)
-	camera.getWorldDirection(worldDirection);
-	raycasterOrigin = new THREE.Vector3(controls.getObject().position.x, controls.getObject().position.y, controls.getObject().position.z);
-	raycaster2.set(raycasterOrigin, worldDirection);
+	camera.getWorldDirection(worldDirection2);
+	raycasterOrigin2 = new THREE.Vector3(controls.getObject().position.x, controls.getObject().position.y, controls.getObject().position.z);
+	raycaster2.set(raycasterOrigin2, worldDirection2);
 	intersect = raycaster2.intersectObjects( scene.children, true );
 
 	
@@ -272,11 +279,15 @@ var animate = function () {
 			if ((scene.getObjectByName('bullet').position.x == toPosX) && 
 			(scene.getObjectByName('bullet').position.y == toPosY) &&
 			(scene.getObjectByName('bullet').position.z == toPosZ)){
-				if((intersect[0].object.name !== 'Sphere001') && 
+				if((intersect[0].object.name !== 'Sphere001') &&  (scene.getObjectByName('cowboy')) &&
 				(typeof (scene.getObjectByName('cowboy')).getObjectByName(intersect[0].object.name) !== 'undefined')){
 					//console.log(scene.getObjectByName('cowboy').getObjectByName(intersect[0].object.name));
-					//scene.remove(scene.getObjectByName('cowboy'));
 					console.log('Preso');
+					enemyLifes -= 1;
+					if(enemyLifes == 0) {
+						scene.remove(scene.getObjectByName('cowboy'));
+						console.log('Morto');
+					}
 				}
 				scene.remove(scene.getObjectByName('bullet'));
 				bulletLoaded = false;
@@ -284,6 +295,29 @@ var animate = function () {
 		}
 	}
 	// fine animazione proiettile
+	
+	
+	// Vite
+	/*
+	healthBarCharacter = document.getElementById("healthBarCharacter");
+	healthBarCharacter.style.width = "20%";
+	healthBarCharacter.style.background = "green";
+	healthBarCharacter.innerHTML ="20%";
+	*/
+
+	healthBarEnemy = document.getElementById("healthBarEnemy");
+	healthBarEnemy.style.width = enemyLifes*10 + "%";
+	if(enemyLifes >= 8) {
+		healthBarEnemy.style.background = "green";
+	}
+	if(enemyLifes <= 3) {
+		healthBarEnemy.style.background = "red";
+	}
+	if (enemyLifes < 8 && enemyLifes > 3) {
+		healthBarEnemy.style.background = "orange";
+	}
+	healthBarEnemy.innerHTML = enemyLifes*10 +"%";
+	// fine vite
 	
 	check_collisions(controls, camera, scene, collisions, collisionDistance);
 	
