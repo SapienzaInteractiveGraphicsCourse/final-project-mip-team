@@ -1,7 +1,7 @@
-worldDirection2    //Import library and loaders easiest way: link to unpkg website
+    //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions, add_crosshair, delete_lights, add_lights} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions, add_crosshair, delete_lights, add_lights, create_bullet} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -37,10 +37,30 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     var crossColorWait = 0xC9302C;
 
     var healthBarCharacter, healthBarEnemy;
+    var died = false;
+    var died_enemy = false;
     var characterLifes = 10;
     var enemyLifes = 10;
 
     var dirLight, hemiLight, lightAmbient;
+
+    // Take get values from the url string
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var get_light = url.searchParams.get("light");
+    var get_sex = url.searchParams.get("sex");
+
+    var name_enemy = 'dragon'
+    var name_bullet_enemy = 'fire_ball'
+
+    var bulletPositionEnemy;
+    var bulletLoadedEnemy = false;
+    var toPosXEnemy, toPosYEnemy, toPosZEnemy;
+    var time_shoting_rate = 0;
+    var enemy_shooting = false;
+    var canShotEnemy = false;
+    var time_shoting = 2000;
+
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -51,6 +71,7 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
         instructions.addEventListener( 'click', function () {
 
           controls.lock();
+          canShotEnemy = true;
 
         }, false );
 
@@ -122,6 +143,51 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       }
     }
 
+    function shot_enemy(){
+      if (enemy_shooting == true) {
+          //create_bullet(scene,name_bullet_enemy)
+          load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
+
+          // To move the gun together with the camera, but translated of the right position
+          if (scene.getObjectByName(name_bullet_enemy)) {
+            var bulletModelEnemy = scene.getObjectByName(name_bullet_enemy);
+            var weaponModelEnemy = scene.getObjectByName(name_enemy);
+            bulletModelEnemy.position.copy( weaponModelEnemy.position);
+            bulletModelEnemy.rotation.copy( weaponModelEnemy.rotation);
+            bulletModelEnemy.translateX( -0.75);
+            bulletModelEnemy.translateY( 2.8);
+            bulletModelEnemy.translateZ( 2);
+          }
+        enemy_shooting = false;
+      }
+      if (bulletModelEnemy && !bulletLoadedEnemy) {
+        bulletPositionEnemy = new createjs.Tween.get(bulletModelEnemy.position);
+        toPosXEnemy = camera.position.x;
+        toPosYEnemy = camera.position.y;
+        toPosZEnemy = camera.position.z;
+        bulletLoadedEnemy = true;
+      }
+      if (scene.getObjectByName(name_bullet_enemy) && bulletLoadedEnemy) {
+        bulletPositionEnemy.to({x:toPosXEnemy, y:toPosYEnemy, z:toPosZEnemy}, time_shoting);
+        if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) &&
+        (scene.getObjectByName(name_bullet_enemy).position.y == toPosYEnemy) &&
+        (scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
+          if(camera.position.x == toPosXEnemy && camera.position.y == toPosYEnemy && camera.position.z == toPosZEnemy){
+            console.log('Preso');
+            characterLifes -= 1;
+            if(characterLifes == 0) {
+              console.log('Game over');
+              died = true;
+              window.location.href = '../index_final_negative.html?light=' + get_light+ '&sex='+get_sex;
+            }
+          }
+
+          scene.remove(scene.getObjectByName(name_bullet_enemy));
+          bulletLoadedEnemy = false;
+        }
+      }
+    }
+
 
     function init(){
       //Create the renderer
@@ -179,8 +245,14 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       //Load other objects
       load_object_gltf(scene, 'dragon', false, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
       load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
-      load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
 
+
+    		if(get_light=='night') {
+    			delete_lights( scene, hemiLight, lightAmbient);
+    		}
+    		else {
+    			add_lights (scene, hemiLight, lightAmbient);
+    		}
 
       crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.25, 0.25);
 
@@ -211,6 +283,12 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
         dragonTweens['wing_right_joint_rotation'].to({y: THREE.Math.degToRad(-12)}, 2000).to({y: THREE.Math.degToRad(12)}, 2000);
         // Meanwhile, move the torso in the y direction
         dragonTweens['torso_position'].to({y: 2.5}, 2000).to({y: -2.5}, 2000);
+        if(canShotEnemy) time_shoting_rate += 1;
+        if(time_shoting_rate / 100 == 1) {
+          enemy_shooting = true;
+          time_shoting_rate = 0;
+        }
+        shot_enemy();
       }
 
       motion();
@@ -246,12 +324,13 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     		}
     		if (scene.getObjectByName('arrow') && arrowLoaded) {
           crosshair.material = new THREE.LineBasicMaterial({ color: crossColorWait });
-    			arrowPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 3000);
+    			arrowPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 1000);
     			if ((scene.getObjectByName('arrow').position.x == toPosX) &&
     			(scene.getObjectByName('arrow').position.y == toPosY) &&
     			(scene.getObjectByName('arrow').position.z == toPosZ)){
             console.log(intersect[4].object.name);
     				if((intersect[4].object.name !== 'bolt_low') &&
+            ( scene.getObjectByName('dragon')) &&
     				(typeof (scene.getObjectByName('dragon')).getObjectByName(intersect[4].object.name) !== 'undefined')){
     					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
     					//scene.remove(scene.getObjectByName('dragon'));
@@ -260,7 +339,7 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
               if(enemyLifes == 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
-                console.log('Morto');
+                window.location.href = '../index_final_positive.html?light=' + get_light+ '&sex='+get_sex;
               }
     				}
     				scene.remove(scene.getObjectByName('arrow'));
@@ -272,12 +351,19 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     	// fine animazione proiettile
 
       // Vite
-    	/*
     	healthBarCharacter = document.getElementById("healthBarCharacter");
-    	healthBarCharacter.style.width = "20%";
-    	healthBarCharacter.style.background = "green";
-    	healthBarCharacter.innerHTML ="20%";
-    	*/
+    	healthBarCharacter.style.width = characterLifes*10 + "%";
+    	if(characterLifes >= 8) {
+    		healthBarCharacter.style.background = "green";
+    	}
+    	if(characterLifes <= 3) {
+    		healthBarCharacter.style.background = "red";
+    	}
+    	if (characterLifes < 8 && characterLifes > 3) {
+    		healthBarCharacter.style.background = "orange";
+    	}
+    	healthBarCharacter.innerHTML = characterLifes*10 +"%";
+
 
     	healthBarEnemy = document.getElementById("healthBarEnemy");
     	healthBarEnemy.style.width = enemyLifes*10 + "%";

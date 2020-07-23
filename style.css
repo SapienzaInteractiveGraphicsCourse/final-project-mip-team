@@ -56,3 +56,55 @@
   background-color: blue;
   text-align: center;
 }
+
+body {
+	overflow: hidden;
+}
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+.content {
+	font-family: "Courier New", Courier, monospace;
+  position: fixed;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 20px;
+	font-size: 20px;
+}
+
+#day {
+	width: 200px;
+	text-align: center;
+	border: 1px solid white;
+	display: inline-block;
+}
+#night {
+	width: 200px;
+	text-align: center;
+	border: 1px solid white;
+	display: inline-block;
+}
+#male {
+	width: 200px;
+	text-align: center;
+	border: 1px solid white;
+	display: inline-block;
+}
+#female {
+	width: 200px;
+	text-align: center;
+	border: 1px solid white;
+	display: inline-block;
+}
+#play {
+	width: 200px;
+	text-align: center;
+	border: 1px solid white;
+	display: inline-block;
+}

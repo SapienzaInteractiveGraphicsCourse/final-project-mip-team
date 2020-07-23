@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Menu</title>
+		<meta charset="utf-8">
+		<!-- Add favicon -->
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<!-- Old style font -->
+		<link rel="stylesheet" href="style.css">
+		<!-- Importing three.js -->
+  </head>
+	<body>
+    <!--
+		<audio id="mammmagamma">
+			<source src="js/sounds/menuMaggamma.mp3" type="audio/ogg">
+		</audio>
+  -->
+	<!-- The video -->
+	<video autoplay muted loop id="myVideo">
+	  <source src="background.mp4" type="video/mp4">
+	</video>
+
+	<div class="content">
+		<h1 id="result">Qualcosa</h1>
+		<h3>Created by Irene Bondanza, Martina Valleriani & Pietro Nardelli</h3>
+		<h4>Final project of the Interactive Graphics Course - Sapienza</h4>
+
+		<table>
+			<tr>
+				<td>Choose the light:</td>
+	    	<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="day">day</div></td>
+				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="night">night</div></td>
+				<td rowspan="2"><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="play">play</div></td>
+			</tr>
+			<tr>
+				<td>Choose the sex:</td>
+				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="male">male</div></td>
+				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="female">female</div></td>
+			</tr>
+	</div>
+
+    <script>
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var get_sex = url.searchParams.get("sex");
+    if (sex == 'male'){
+      document.getElementById("result").innerHTML = "Your are the king of the three kingdoms!" ;
+    }
+    else {
+      document.getElementById("result").innerHTML = "Your are the queen of the three kingdoms!" ;
+    }
+    </script>
+	</body>
+</html>
