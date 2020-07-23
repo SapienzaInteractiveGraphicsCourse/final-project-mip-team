@@ -182,7 +182,7 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
 
 
-      crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady);
+      crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.25, 0.25);
 
       controller();
     }

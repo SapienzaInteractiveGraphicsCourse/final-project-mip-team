@@ -219,7 +219,7 @@ export function check_collisions(controls, camera, scene, collisions, collisionD
   }
 }
 
-export function add_crosshair (crosshair, camera, collisionDistance, colorReady) {
+export function add_crosshair (crosshair, camera, collisionDistance, colorReady, sizeX, sizeY) {
   var crossMaterial = new THREE.LineBasicMaterial({ color: colorReady });
 
   // crosshair size
