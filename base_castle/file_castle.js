@@ -175,11 +175,12 @@
         (scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
           if(camera.position.x == toPosXEnemy && camera.position.y == toPosYEnemy && camera.position.z == toPosZEnemy){
             console.log('Preso');
-            characterLifes -= 1;
+            characterLifes -= 2.5;
             if(characterLifes == 0) {
               console.log('Game over');
               died = true;
-              window.location.href = '../index_final_negative.html?light=' + get_light+ '&sex='+get_sex;
+              //load_audio(...)
+              window.location.href = '../index.html';
             }
           }
 
@@ -290,7 +291,9 @@
           enemy_shooting = true;
           time_shoting_rate = 0;
         }
-        shot_enemy();
+        if (scene.getObjectByName('dragon')){
+          shot_enemy();
+        }
       }
 
       motion();

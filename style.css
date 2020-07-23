@@ -77,6 +77,18 @@ body {
   padding: 20px;
 	font-size: 20px;
 }
+.content_final {
+	font-family: "Courier New", Courier, monospace;
+  position: fixed;
+	text-align: center;
+	left: 0px;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 20px;
+	font-size: 20px;
+}
 
 #day {
 	width: 200px;

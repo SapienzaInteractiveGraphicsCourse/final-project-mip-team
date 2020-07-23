@@ -10,8 +10,7 @@
             "nodes" : [
                 0,
                 1,
-                2,
-                3
+                2
             ]
         }
     ],
@@ -57,26 +56,6 @@
         },
         {
             "mesh" : 1,
-            "name" : "splash_SPLASH_0.001",
-            "rotation" : [
-                -0.007857520133256912,
-                0.6955016255378723,
-                0.7184416055679321,
-                0.007606633007526398
-            ],
-            "scale" : [
-                0.14700919389724731,
-                0.14700919389724731,
-                0.14700919389724731
-            ],
-            "translation" : [
-                -2.629499912261963,
-                0.6938968896865845,
-                -15.9566068649292
-            ]
-        },
-        {
-            "mesh" : 2,
             "name" : "fireball_low_FIREBALL_0",
             "rotation" : [
                 -0.007857520133256912,
@@ -163,28 +142,15 @@
             ]
         },
         {
-            "name" : "splash_SPLASH_0.001",
-            "primitives" : [
-                {
-                    "attributes" : {
-                        "POSITION" : 3,
-                        "NORMAL" : 4
-                    },
-                    "indices" : 5,
-                    "material" : 0
-                }
-            ]
-        },
-        {
             "name" : "fireball_low_FIREBALL_0",
             "primitives" : [
                 {
                     "attributes" : {
-                        "POSITION" : 6,
-                        "NORMAL" : 7,
-                        "TEXCOORD_0" : 8
+                        "POSITION" : 3,
+                        "NORMAL" : 4,
+                        "TEXCOORD_0" : 5
                     },
-                    "indices" : 9,
+                    "indices" : 6,
                     "material" : 1
                 }
             ]
@@ -230,61 +196,33 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 65538,
+            "count" : 35462,
             "max" : [
-                -1.403692603111267,
+                -1.7591923475265503,
                 77.08252716064453,
-                12.811668395996094
+                11.973226547241211
             ],
             "min" : [
-                -14.443021774291992,
-                34.1605339050293,
-                -5.190695285797119
+                -13.760342597961426,
+                61.4218864440918,
+                -2.4117159843444824
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 65538,
+            "count" : 35462,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
-            "componentType" : 5125,
-            "count" : 390864,
+            "componentType" : 5123,
+            "count" : 211557,
             "type" : "SCALAR"
         },
         {
             "bufferView" : 3,
-            "componentType" : 5126,
-            "count" : 61802,
-            "max" : [
-                1.1974958181381226,
-                75.12107849121094,
-                11.206036567687988
-            ],
-            "min" : [
-                -19.84977149963379,
-                34.922908782958984,
-                -6.303772449493408
-            ],
-            "type" : "VEC3"
-        },
-        {
-            "bufferView" : 4,
-            "componentType" : 5126,
-            "count" : 61802,
-            "type" : "VEC3"
-        },
-        {
-            "bufferView" : 5,
-            "componentType" : 5123,
-            "count" : 351696,
-            "type" : "SCALAR"
-        },
-        {
-            "bufferView" : 6,
             "componentType" : 5126,
             "count" : 74,
             "max" : [
@@ -300,19 +238,19 @@
             "type" : "VEC3"
         },
         {
-            "bufferView" : 7,
+            "bufferView" : 4,
             "componentType" : 5126,
             "count" : 74,
             "type" : "VEC3"
         },
         {
-            "bufferView" : 8,
+            "bufferView" : 5,
             "componentType" : 5126,
             "count" : 74,
             "type" : "VEC2"
         },
         {
-            "bufferView" : 9,
+            "bufferView" : 6,
             "componentType" : 5123,
             "count" : 360,
             "type" : "SCALAR"
@@ -321,58 +259,43 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 786456,
+            "byteLength" : 425544,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 786456,
-            "byteOffset" : 786456
+            "byteLength" : 425544,
+            "byteOffset" : 425544
         },
         {
             "buffer" : 0,
-            "byteLength" : 1563456,
-            "byteOffset" : 1572912
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 741624,
-            "byteOffset" : 3136368
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 741624,
-            "byteOffset" : 3877992
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 703392,
-            "byteOffset" : 4619616
+            "byteLength" : 423114,
+            "byteOffset" : 851088
         },
         {
             "buffer" : 0,
             "byteLength" : 888,
-            "byteOffset" : 5323008
+            "byteOffset" : 1274204
         },
         {
             "buffer" : 0,
             "byteLength" : 888,
-            "byteOffset" : 5323896
+            "byteOffset" : 1275092
         },
         {
             "buffer" : 0,
             "byteLength" : 592,
-            "byteOffset" : 5324784
+            "byteOffset" : 1275980
         },
         {
             "buffer" : 0,
             "byteLength" : 720,
-            "byteOffset" : 5325376
+            "byteOffset" : 1276572
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 5326096,
+            "byteLength" : 1277292,
             "uri" : "fire_ball.bin"
         }
     ]

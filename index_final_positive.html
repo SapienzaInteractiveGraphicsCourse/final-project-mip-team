@@ -10,45 +10,45 @@
 		<!-- Importing three.js -->
   </head>
 	<body>
-    <!--
-		<audio id="mammmagamma">
-			<source src="js/sounds/menuMaggamma.mp3" type="audio/ogg">
-		</audio>
-  -->
+
+
+		<audio controls autoplay>
+   		<source src="sounds/bow.mp3" type="audio/mpeg">
+	 	</audio>
+
 	<!-- The video -->
-	<video autoplay muted loop id="myVideo">
-	  <source src="background.mp4" type="video/mp4">
+
+	<video autoplay muted loop muted id="myVideo">
+	  <source src="background_final_positive.mp4" type="video/mp4">
 	</video>
 
-	<div class="content">
+	<div class="content_final">
 		<h1 id="result">Qualcosa</h1>
-		<h3>Created by Irene Bondanza, Martina Valleriani & Pietro Nardelli</h3>
-		<h4>Final project of the Interactive Graphics Course - Sapienza</h4>
-
-		<table>
-			<tr>
-				<td>Choose the light:</td>
-	    	<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="day">day</div></td>
-				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="night">night</div></td>
-				<td rowspan="2"><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="play">play</div></td>
-			</tr>
-			<tr>
-				<td>Choose the sex:</td>
-				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="male">male</div></td>
-				<td><div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="female">female</div></td>
-			</tr>
+		<div onclick="clicked(this.id)" onmouseover="over(this.id)" onmouseout="out(this.id)" id="day">Restart</div>
 	</div>
 
     <script>
-    var url_string = window.location.href;
-    var url = new URL(url_string);
-    var get_sex = url.searchParams.get("sex");
-    if (sex == 'male'){
-      document.getElementById("result").innerHTML = "Your are the king of the three kingdoms!" ;
-    }
-    else {
-      document.getElementById("result").innerHTML = "Your are the queen of the three kingdoms!" ;
-    }
+	    var url_string = window.location.href;
+	    var url = new URL(url_string);
+	    var get_sex = url.searchParams.get("sex");
+
+	    if (get_sex == 'male'){
+	      document.getElementById("result").innerHTML = "Your are the king of the three kingdoms!" ;
+	    }
+	    else {
+	      document.getElementById("result").innerHTML = "Your are the queen of the three kingdoms!" ;
+	    }
+
+			function clicked(id){
+				window.location.href = 'index.html';
+			}
+			function over (id){
+				document.getElementById(id).style.opacity = "0.5";
+			}
+
+			function out (id){
+				document.getElementById(id).style.opacity = "1";
+			}
     </script>
 	</body>
 </html>
