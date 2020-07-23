@@ -1,7 +1,7 @@
     //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions, add_crosshair, delete_lights, add_lights, create_bullet} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions, add_crosshair, delete_lights, add_lights, create_bullet, load_audio} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -61,6 +61,7 @@
     var canShotEnemy = false;
     var time_shoting = 2000;
 
+    var sound;
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -255,6 +256,7 @@
     		}
 
       crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.25, 0.25);
+      sound = load_audio(camera, '../sounds/bow.mp3');
 
       controller();
     }
@@ -312,6 +314,7 @@
     				arrowModel.translateX( 0 );
     				arrowModel.translateY( 0 );
     				arrowModel.translateZ( 0 );
+            sound.play();
     			}
     			movements[5] = false;
     		}
