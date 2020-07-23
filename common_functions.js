@@ -222,17 +222,15 @@ export function check_collisions(controls, camera, scene, collisions, collisionD
 export function add_crosshair (crosshair, camera, collisionDistance, colorReady, sizeX, sizeY) {
   var crossMaterial = new THREE.LineBasicMaterial({ color: colorReady });
 
-  // crosshair size
-  var x = 0.25, y = 0.25;
 
   var crossGeometry = new THREE.Geometry();
 
   // crosshair
-  crossGeometry.vertices.push(new THREE.Vector3(0, y, 0));
-  crossGeometry.vertices.push(new THREE.Vector3(0, -y, 0));
+  crossGeometry.vertices.push(new THREE.Vector3(0, sizeY, 0));
+  crossGeometry.vertices.push(new THREE.Vector3(0, -sizeY, 0));
   crossGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
-  crossGeometry.vertices.push(new THREE.Vector3(x, 0, 0));
-  crossGeometry.vertices.push(new THREE.Vector3(-x, 0, 0));
+  crossGeometry.vertices.push(new THREE.Vector3(sizeX, 0, 0));
+  crossGeometry.vertices.push(new THREE.Vector3(-sizeX, 0, 0));
 
   crosshair = new THREE.Line(crossGeometry, crossMaterial);
 
