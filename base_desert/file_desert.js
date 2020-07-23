@@ -1,7 +1,7 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions, delete_lights, add_lights} from '../common_functions.js';
+import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions, delete_lights, add_lights, add_crosshair} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
@@ -12,8 +12,6 @@ var movements = [false,false,false,false,false,false];
 var prevTime = performance.now();
 var velocity = new THREE.Vector3();
 var direction = new THREE.Vector3();
-
-var lightOnOff = false;
 
 var cowboyModel;
 var alreadyLoaded = false;
@@ -37,7 +35,12 @@ var died = false;
 var characterLifes = 10;
 var enemyLifes = 10;
 
+var lightOnOff = false;
 var dirLight, hemiLight, lightAmbient;
+
+var crosshair;
+var crossColorReady = 0xAAFFAA;
+var crossColorWait = 0xC9302C;
 
 
 function controller(){
@@ -178,6 +181,8 @@ function init(){
 		}
     };
 	
+	crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.06, 0.06);
+	
 	controller();
 }
 
@@ -245,7 +250,7 @@ var animate = function () {
 	raycaster2.set(raycasterOrigin2, worldDirection2);
 	intersect = raycaster2.intersectObjects( scene.children, true );
 
-	if (typeof intersect[0] !== 'undefined') {
+	if (typeof intersect[4] !== 'undefined') {
 		if (movements[5] == true) {
 			load_object_gltf(scene, 'bullet', false, './gun/bullet.gltf', 0, 0, 0, 0, 0, 0);
 			// To move the gun together with the camera, but translated of the right position
@@ -262,20 +267,21 @@ var animate = function () {
 		}
 		if (bulletModel && !bulletLoaded) {
 			bulletPosition = new createjs.Tween.get(bulletModel.position);
-			toPosX = intersect[0].point.x;
-			toPosY = intersect[0].point.y;
-			toPosZ = intersect[0].point.z;
+			toPosX = intersect[4].point.x;
+			toPosY = intersect[4].point.y;
+			toPosZ = intersect[4].point.z;
 			bulletLoaded = true;
 		}
 		if (scene.getObjectByName('bullet') && bulletLoaded) {
+			crosshair.material = new THREE.LineBasicMaterial({ color: crossColorWait });
+			
 			bulletPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 1000);
 
 			if ((scene.getObjectByName('bullet').position.x == toPosX) && 
 			(scene.getObjectByName('bullet').position.y == toPosY) &&
 			(scene.getObjectByName('bullet').position.z == toPosZ)){
-				if((intersect[0].object.name !== 'Sphere001') &&  (scene.getObjectByName('cowboy')) &&
-				(typeof (scene.getObjectByName('cowboy')).getObjectByName(intersect[0].object.name) !== 'undefined')){
-					//console.log(scene.getObjectByName('cowboy').getObjectByName(intersect[0].object.name));
+				if((intersect[4].object.name !== 'Sphere001') &&  (scene.getObjectByName('cowboy')) &&
+				(typeof (scene.getObjectByName('cowboy')).getObjectByName(intersect[4].object.name) !== 'undefined')){
 					console.log('Preso');
 					enemyLifes -= 1;
 					if(enemyLifes == 0) {
@@ -292,6 +298,7 @@ var animate = function () {
 					}
 				}
 				scene.remove(scene.getObjectByName('bullet'));
+				crosshair.material = new THREE.LineBasicMaterial({ color: crossColorReady });
 				bulletLoaded = false;
 			}
 		}
