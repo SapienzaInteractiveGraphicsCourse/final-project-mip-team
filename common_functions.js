@@ -248,8 +248,9 @@ export function add_crosshair (crosshair, camera, collisionDistance, colorReady,
   return crosshair;
 }
 
-export function create_bullet(scene,name_bullet){
-  var geometry = new THREE.SphereGeometry(0.08, 10, 10);
+export function create_bullet(scene,name_bullet,radius = null){
+  if(!radius)var geometry = new THREE.SphereGeometry(0.08, 10, 10);
+  else var geometry = new THREE.SphereGeometry(radius, 10, 10);
   var material = new THREE.MeshLambertMaterial({color: 0x696969});
   var sphere = new THREE.Mesh(geometry, material);
   sphere.name = name_bullet
