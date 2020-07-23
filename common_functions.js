@@ -84,20 +84,17 @@ export function load_object_gltf(scene, name, print_tree, path_gltf_object,
 
 }
 
-export function delete_lights(scene,directional,ambient){
-  scene.remove(directional);
-  scene.remove(ambient);
+export function delete_lights(scene, light1, light2){
+  scene.remove(light1);
+  scene.remove(light2);
   scene.background = new THREE.Color( 0x175082 );
 }
 
-export function add_lights(scene,directional,ambient,spotlight = null){
-  scene.add( directional);
-  scene.add( ambient );
-  scene.remove(spotlight);
+export function add_lights(scene, light1, light2){
+  scene.add( light1 );
+  scene.add( light2 );
   scene.background = new THREE.Color( 0x74D7FF );
 }
-
-
 
 export function onKeyDown(event,movements,velocity) {
   switch ( event.keyCode ) {

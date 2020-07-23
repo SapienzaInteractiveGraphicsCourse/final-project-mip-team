@@ -33,3 +33,26 @@
 
 	cursor: pointer;
 }
+
+#healthBarCharacterContainer {
+  position: absolute;
+  left: 30px;
+  width: 300px;
+  background-color: grey;
+}
+#healthBarCharacter {
+  position:relative;
+  background-color: blue;
+  text-align: center;
+}
+#healthBarEnemyContainer {
+  position: absolute;
+  right: 30px;
+  width: 300px;
+  background-color: grey;
+}
+#healthBarEnemyCharacter {
+  position:relative;
+  background-color: blue;
+  text-align: center;
+}

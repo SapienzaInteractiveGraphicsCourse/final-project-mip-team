@@ -1,7 +1,7 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
+import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions, delete_lights, add_lights} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
@@ -32,10 +32,12 @@ collisions['left'] = 1;
 collisions['right'] = 1;
 var collisionDistance = 0.4;
 
-var healthBarCharacter;
-var healthBarEnemy;
+var healthBarCharacter, healthBarEnemy;
+var died = false;
 var characterLifes = 10;
 var enemyLifes = 10;
+
+var dirLight, hemiLight, lightAmbient;
 
 
 function controller(){
@@ -124,7 +126,7 @@ function init(){
 	scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
 	
 	// Lights
-	var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+	dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
 	dirLight.color.setHSL( 0.1, 1, 0.95 );
 	dirLight.position.set( - 1, 1.75, 1 );
 	dirLight.position.multiplyScalar( 30 );
@@ -145,11 +147,11 @@ function init(){
 	dirLight.shadow.camera.far = 3500;
 	dirLight.shadow.bias = - 0.0001;
 
-	var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+	hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
 	hemiLight.color.setHSL( 0.6, 1, 0.6 );
 	scene.add( hemiLight );
 
-	var lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
+	lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
 	scene.add( lightAmbient );
 
 	// Camera
@@ -170,20 +172,12 @@ function init(){
 	document.getElementById("lightOnOff").onclick = function() {
         lightOnOff = !lightOnOff;
 		if(lightOnOff) {
-			scene.remove( dirLight );
-			scene.remove( lightAmbient );
-			scene.background = new THREE.Color( 0x175082 ); // sfondo per avere effetto cielo di notte
-			// Add spotlight
-			load_object_gltf(scene, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
+			delete_lights( scene, hemiLight, lightAmbient);
 		}
 		else {
-			scene.add( dirLight );
-			scene.add( lightAmbient );
-			scene.remove(scene.getObjectByName('spot'));
-			scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
+			add_lights (scene, hemiLight, lightAmbient);
 		}
     };
-	
 	
 	controller();
 }
@@ -195,7 +189,7 @@ var animate = function () {
 	motion();
 	
 	// When the camera passes the portail, redirect to the base nature
-	if((camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
+	if(died && (camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
 		window.location.replace("/base_nature/index_nature.html");
 	}
 
@@ -250,7 +244,6 @@ var animate = function () {
 	raycaster2.set(raycasterOrigin2, worldDirection2);
 	intersect = raycaster2.intersectObjects( scene.children, true );
 
-	
 	if (typeof intersect[0] !== 'undefined') {
 		if (movements[5] == true) {
 			load_object_gltf(scene, 'bullet', false, './gun/bullet.gltf', 0, 0, 0, 0, 0, 0);
@@ -287,6 +280,10 @@ var animate = function () {
 					if(enemyLifes == 0) {
 						scene.remove(scene.getObjectByName('cowboy'));
 						console.log('Morto');
+						died = true;
+						delete_lights(scene, dirLight, lightAmbient);
+						// Add spotlight
+						load_object_gltf(scene, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
 					}
 				}
 				scene.remove(scene.getObjectByName('bullet'));

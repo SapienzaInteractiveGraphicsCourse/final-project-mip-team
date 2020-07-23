@@ -781,70 +781,10 @@
             "name" : "Material",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1
-                ],
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
-            }
-        },
-        {
-            "alphaMode" : "BLEND",
-            "doubleSided" : true,
-            "emissiveFactor" : [
-                0,
-                0,
-                0
-            ],
-            "name" : "Material.001",
-            "pbrMetallicRoughness" : {
-                "baseColorFactor" : [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1
-                ],
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
-            }
-        },
-        {
-            "alphaMode" : "BLEND",
-            "doubleSided" : true,
-            "emissiveFactor" : [
-                0,
-                0,
-                0
-            ],
-            "name" : "Material.002",
-            "pbrMetallicRoughness" : {
-                "baseColorFactor" : [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1
-                ],
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
-            }
-        },
-        {
-            "alphaMode" : "BLEND",
-            "doubleSided" : true,
-            "emissiveFactor" : [
-                0,
-                0,
-                0
-            ],
-            "name" : "Material.003",
-            "pbrMetallicRoughness" : {
-                "baseColorFactor" : [
-                    0.800000011920929,
-                    0.800000011920929,
-                    0.800000011920929,
-                    1
+                    1,
+                    1,
+                    1,
+                    0
                 ],
                 "metallicFactor" : 0,
                 "roughnessFactor" : 0.5
@@ -1128,7 +1068,7 @@
                         "TEXCOORD_0" : 78
                     },
                     "indices" : 75,
-                    "material" : 17
+                    "material" : 16
                 }
             ]
         },
@@ -1142,7 +1082,7 @@
                         "TEXCOORD_0" : 81
                     },
                     "indices" : 75,
-                    "material" : 18
+                    "material" : 16
                 }
             ]
         },
@@ -1156,7 +1096,7 @@
                         "TEXCOORD_0" : 84
                     },
                     "indices" : 75,
-                    "material" : 19
+                    "material" : 16
                 }
             ]
         }
