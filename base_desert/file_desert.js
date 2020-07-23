@@ -158,7 +158,6 @@ function init(){
 	camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 1000);
 
 	// Add desert
-	//load_world_gltf(scene, camera, './desert.obj', './desert.mtl', -8, 0.6, 0);
 	load_world_gltf(scene, camera, './desert.gltf', -8, 0.6, 0);
 	camera.rotation.y = -1.57;
 	
@@ -188,7 +187,7 @@ var animate = function () {
 	requestAnimationFrame( animate );
 	motion();
 	
-	// When the camera passes the portail, redirect to the base nature
+	// If enemy is died, redirect to the base nature when the camera passes the portail
 	if(died && (camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
 		window.location.replace("/base_nature/index_nature.html");
 	}
@@ -201,11 +200,12 @@ var animate = function () {
 		alreadyLoaded = true;
 		var cowboyModel = scene.getObjectByName('cowboy');
 
-		//Create a tween objects
+		//Create tween objects
 		cowboyTweens['spallaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaDX').rotation);
 		cowboyTweens['spallaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaSX').rotation);
 		
 		cowboyTweens['petto_position'] = new createjs.Tween.get(cowboyModel.getObjectByName('petto').position);
+		cowboyTweens['petto_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('petto').rotation);
 		
 		cowboyTweens['ancaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaDX').rotation);
 		cowboyTweens['ancaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaSX').rotation);
@@ -226,14 +226,15 @@ var animate = function () {
 		cowboyTweens['ancaDX_rotation'].to({x: THREE.Math.degToRad(-115)}, 1000).to({x: THREE.Math.degToRad(-80)}, 1000);
 		cowboyTweens['ancaSX_rotation'].to({x: THREE.Math.degToRad(-80)}, 1000).to({x: THREE.Math.degToRad(-115)}, 1000);
 		
-		cowboyTweens['ginocchioDX_rotation'].to({x: THREE.Math.degToRad(0)}, 1000).to({x: THREE.Math.degToRad(25)}, 1000);
-		cowboyTweens['ginocchioSX_rotation'].to({x: THREE.Math.degToRad(25)}, 1000).to({x: THREE.Math.degToRad(0)}, 1000);
+		cowboyTweens['ginocchioDX_rotation'].to({x: THREE.Math.degToRad(0)}, 1000).to({x: THREE.Math.degToRad(30)}, 1000);
+		cowboyTweens['ginocchioSX_rotation'].to({x: THREE.Math.degToRad(30)}, 1000).to({x: THREE.Math.degToRad(0)}, 1000);
 		
 		cowboyTweens['piedeDX_rotation'].to({x: THREE.Math.degToRad(10)}, 1000).to({x: THREE.Math.degToRad(-10)}, 1000);
 		cowboyTweens['piedeSX_rotation'].to({x: THREE.Math.degToRad(-10)}, 1000).to({x: THREE.Math.degToRad(10)}, 1000);
 		
 		// Meanwhile, move the cowboy (petto is the root) in the x and z directions
-		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 0, z: -1}, 12000);
+		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 1, z: 0}, 12000);//.to({x: -1.5, z: 1}, 12000).to({x: -1, z: -1}, 12000);
+		cowboyTweens['petto_rotation'].to({y: THREE.Math.degToRad(2)}, 2000).to({y: THREE.Math.degToRad(-2)}, 2000);
 	}
 	// fine animazione cowboy
 	
@@ -281,7 +282,11 @@ var animate = function () {
 						scene.remove(scene.getObjectByName('cowboy'));
 						console.log('Morto');
 						died = true;
+						
 						delete_lights(scene, dirLight, lightAmbient);
+						if (lightOnOff) {
+							scene.add(hemiLight);
+						}
 						// Add spotlight
 						load_object_gltf(scene, 'spot', false, './spotlight/spotlight.gltf', 4, 8, -4, 0, -90, 0);
 					}
