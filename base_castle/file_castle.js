@@ -1,7 +1,7 @@
 worldDirection2    //Import library and loaders easiest way: link to unpkg website
     import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
     import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions} from '../common_functions.js';
+    import {onKeyUp, onKeyDown, load_world_gltf, load_object_gltf, weapon_movement, check_collisions, add_crosshair, delete_lights, add_lights} from '../common_functions.js';
 
 
     var renderer, scene, controls, camera;
@@ -31,6 +31,16 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     var worldDirection2 = new THREE.Vector3();
     var intersect, rayCasterOrigin2;
     var raycaster2 = new THREE.Raycaster();
+
+    var crosshair;
+    var crossColorReady = 0xAAFFAA;
+    var crossColorWait = 0xC9302C;
+
+    var healthBarCharacter, healthBarEnemy;
+    var characterLifes = 10;
+    var enemyLifes = 10;
+
+    var dirLight, hemiLight, lightAmbient;
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -126,7 +136,7 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       scene.background = new THREE.Color( 0x74D7FF );
 
       /* Lights */
-      var dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+      dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
       dirLight.color.setHSL( 0.1, 1, 0.95 );
       dirLight.position.set( - 1, 1.75, 1 );
       dirLight.position.multiplyScalar( 30 );
@@ -152,11 +162,11 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       scene.add( dirLightHeper );
       */
 
-      var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+      hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
       hemiLight.color.setHSL( 0.6, 1, 0.6 );
       scene.add( hemiLight );
 
-      var lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
+      lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
       scene.add( lightAmbient );
       /* */
 
@@ -170,6 +180,9 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
       load_object_gltf(scene, 'dragon', false, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
       load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
       load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
+
+
+      crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady);
 
       controller();
     }
@@ -209,10 +222,10 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     	raycaster2.set(rayCasterOrigin2, worldDirection2);
     	intersect = raycaster2.intersectObjects( scene.children, true );
 
-      if (typeof intersect[0] !== 'undefined') {
+      if (typeof intersect[4] !== 'undefined') {
     		if (movements[5] == true) {
     			load_object_gltf(scene, 'arrow', false, 'arrow/arrow.gltf', 0, 0, 0, 0, 0, 0);
-    			// To move the crossbow together with the camera, but translated of the right position
+          // To move the crossbow together with the camera, but translated of the right position
     			if (scene.getObjectByName('arrow')) {
     				var arrowModel = scene.getObjectByName('arrow');
     				var weaponModel = scene.getObjectByName('crossbow');
@@ -226,29 +239,59 @@ worldDirection2    //Import library and loaders easiest way: link to unpkg websi
     		}
     		if (arrowModel && !arrowLoaded) {
     			arrowPosition = new createjs.Tween.get(arrowModel.position);
-    			toPosX = intersect[0].point.x;
-    			toPosY = intersect[0].point.y;
-    			toPosZ = intersect[0].point.z;
+    			toPosX = intersect[4].point.x;
+    			toPosY = intersect[4].point.y;
+    			toPosZ = intersect[4].point.z;
     			arrowLoaded = true;
     		}
     		if (scene.getObjectByName('arrow') && arrowLoaded) {
+          crosshair.material = new THREE.LineBasicMaterial({ color: crossColorWait });
     			arrowPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 3000);
     			if ((scene.getObjectByName('arrow').position.x == toPosX) &&
     			(scene.getObjectByName('arrow').position.y == toPosY) &&
     			(scene.getObjectByName('arrow').position.z == toPosZ)){
-            console.log(intersect[0].object.name);
-    				if((intersect[0].object.name !== 'Sphere001') &&
-    				(typeof (scene.getObjectByName('dragon')).getObjectByName(intersect[0].object.name) !== 'undefined')){
+            console.log(intersect[4].object.name);
+    				if((intersect[4].object.name !== 'bolt_low') &&
+    				(typeof (scene.getObjectByName('dragon')).getObjectByName(intersect[4].object.name) !== 'undefined')){
     					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
     					//scene.remove(scene.getObjectByName('dragon'));
     					console.log('Preso');
+              enemyLifes -= 1;
+              if(enemyLifes == 0) {
+                scene.remove(scene.getObjectByName('dragon'));
+                scene.remove(scene.getObjectByName('fire_ball'));
+                console.log('Morto');
+              }
     				}
     				scene.remove(scene.getObjectByName('arrow'));
+            crosshair.material = new THREE.LineBasicMaterial({ color: crossColorReady });
     				arrowLoaded = false;
     			}
     		}
     	}
     	// fine animazione proiettile
+
+      // Vite
+    	/*
+    	healthBarCharacter = document.getElementById("healthBarCharacter");
+    	healthBarCharacter.style.width = "20%";
+    	healthBarCharacter.style.background = "green";
+    	healthBarCharacter.innerHTML ="20%";
+    	*/
+
+    	healthBarEnemy = document.getElementById("healthBarEnemy");
+    	healthBarEnemy.style.width = enemyLifes*10 + "%";
+    	if(enemyLifes >= 8) {
+    		healthBarEnemy.style.background = "green";
+    	}
+    	if(enemyLifes <= 3) {
+    		healthBarEnemy.style.background = "red";
+    	}
+    	if (enemyLifes < 8 && enemyLifes > 3) {
+    		healthBarEnemy.style.background = "orange";
+    	}
+    	healthBarEnemy.innerHTML = enemyLifes*10 +"%";
+    	// fine vite
 
 
       check_collisions(controls, camera, scene, collisions, collisionDistance);
