@@ -1,7 +1,7 @@
 //Import library and loaders easiest way: link to unpkg website
 import * as THREE from 'https://unpkg.com/three@0.118.3/build/three.module.js';
 import { PointerLockControls } from 'https://unpkg.com/three@0.118.3/examples/jsm/controls/PointerLockControls.js';
-import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions, delete_lights, add_lights, add_crosshair} from '../common_functions.js';
+import {load_world_gltf, onKeyUp, onKeyDown, load_object_gltf, weapon_movement, check_collisions, delete_lights, add_lights, add_crosshair, create_bullet} from '../common_functions.js';
 
 var renderer, scene, camera, controls;
 var objects = [];
@@ -31,6 +31,7 @@ collisions['right'] = 1;
 var collisionDistance = 0.4;
 
 var healthBarCharacter, healthBarEnemy;
+var died_enemy = false;
 var died = false;
 var characterLifes = 10;
 var enemyLifes = 10;
@@ -42,6 +43,22 @@ var crosshair;
 var crossColorReady = 0xAAFFAA;
 var crossColorWait = 0xC9302C;
 
+var name_enemy = 'cowboy'
+var name_bullet_enemy = 'bullet_enemy'
+var bulletPositionEnemy;
+var bulletLoadedEnemy = false;
+var toPosXEnemy, toPosYEnemy, toPosZEnemy;
+var time_shoting_rate = 0;
+var time_shoting = 2000;
+var enemy_shooting = false;
+var canShotEnemy = false;
+
+// Take get values from the url string
+var url_string = window.location.href;
+var url = new URL(url_string);
+var get_light = url.searchParams.get("light");
+var get_sex = url.searchParams.get("sex");
+
 
 function controller(){
 	controls = new PointerLockControls( camera, document.body );
@@ -51,6 +68,7 @@ function controller(){
 
 	instructions.addEventListener( 'click', function () {
 		controls.lock();
+		canShotEnemy = true;
 	}, false );
 
 	controls.addEventListener( 'lock', function () {
@@ -108,7 +126,7 @@ function motion(){
 
 		if ( controls.getObject().position.y < 10 ) {
 		  velocity.y = 0;
-		  controls.getObject().position.y = 0.6; //10
+		  controls.getObject().position.y = 0.6;
 		  movements[4] = true;
 		}
 		prevTime = time;
@@ -186,6 +204,49 @@ function init(){
 	controller();
 }
 
+// Shooting enemy
+function shot_enemy(){
+  if (enemy_shooting == true) {
+	  create_bullet(scene, name_bullet_enemy, 0.02);
+	  // To move the gun together with the camera, but translated of the right position
+	  if (scene.getObjectByName(name_bullet_enemy)) {
+		var bulletModelEnemy = scene.getObjectByName(name_bullet_enemy);
+		var weaponModelEnemy = scene.getObjectByName(name_enemy);
+		bulletModelEnemy.position.copy( weaponModelEnemy.position);
+		bulletModelEnemy.rotation.copy( weaponModelEnemy.rotation);
+		bulletModelEnemy.translateX( 0 );
+		bulletModelEnemy.translateY( 0 );
+		bulletModelEnemy.translateZ( 0 );
+	  } 
+	enemy_shooting = false;
+  }
+  if (bulletModelEnemy && !bulletLoadedEnemy) {
+	bulletPositionEnemy = new createjs.Tween.get(bulletModelEnemy.position);
+	toPosXEnemy = camera.position.x;
+	toPosYEnemy = camera.position.y;
+	toPosZEnemy = camera.position.z;
+	bulletLoadedEnemy = true;
+  }
+  if (scene.getObjectByName(name_bullet_enemy) && bulletLoadedEnemy) {
+	bulletPositionEnemy.to({x:toPosXEnemy, y:toPosYEnemy, z:toPosZEnemy}, time_shoting);
+	if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) && 
+	(scene.getObjectByName(name_bullet_enemy).position.y == toPosYEnemy) &&
+	(scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
+	  if(camera.position.x == toPosXEnemy && camera.position.y == toPosYEnemy && camera.position.z == toPosZEnemy){
+		console.log('Preso')
+		characterLifes -= 1;
+		if(characterLifes == 0) {
+			console.log('Game over');
+			died = true;
+			window.location.href = '../index_final_negative.html?light=' + get_light+ '&sex='+get_sex;
+		}
+	  }
+
+	  scene.remove(scene.getObjectByName(name_bullet_enemy));
+	  bulletLoadedEnemy = false;
+	}
+  }
+}
 
 // Animation
 var animate = function () {
@@ -193,8 +254,8 @@ var animate = function () {
 	motion();
 	
 	// If enemy is died, redirect to the base nature when the camera passes the portail
-	if(died && (camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
-		window.location.replace("/base_nature/index_nature.html");
+	if(died_enemy && (camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
+		window.location.href = '../base_nature/index_nature.html?light=' + get_light+ '&sex='+get_sex;
 	}
 
 	weapon_movement(scene, camera, 'gun', 0.1, -0.03, -0.3);
@@ -226,7 +287,7 @@ var animate = function () {
 	if (alreadyLoaded == true) {
 		// Animate the tween z axis for 1s (1K ms) and when it's done, do the same in the opposite direction.
 		cowboyTweens['spallaDX_rotation'].to({x: THREE.Math.degToRad(20)}, 1000).to({x: THREE.Math.degToRad(-20)}, 1000);
-		cowboyTweens['spallaSX_rotation'].to({x: THREE.Math.degToRad(-20)}, 1000).to({x: THREE.Math.degToRad(20)}, 1000);
+		//cowboyTweens['spallaSX_rotation'].to({x: THREE.Math.degToRad(-20)}, 1000).to({x: THREE.Math.degToRad(20)}, 1000);
 		
 		cowboyTweens['ancaDX_rotation'].to({x: THREE.Math.degToRad(-115)}, 1000).to({x: THREE.Math.degToRad(-80)}, 1000);
 		cowboyTweens['ancaSX_rotation'].to({x: THREE.Math.degToRad(-80)}, 1000).to({x: THREE.Math.degToRad(-115)}, 1000);
@@ -238,8 +299,18 @@ var animate = function () {
 		cowboyTweens['piedeSX_rotation'].to({x: THREE.Math.degToRad(-10)}, 1000).to({x: THREE.Math.degToRad(10)}, 1000);
 		
 		// Meanwhile, move the cowboy (petto is the root) in the x and z directions
-		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 1, z: 0}, 12000);//.to({x: -1.5, z: 1}, 12000).to({x: -1, z: -1}, 12000);
-		cowboyTweens['petto_rotation'].to({y: THREE.Math.degToRad(2)}, 2000).to({y: THREE.Math.degToRad(-2)}, 2000);
+		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 1, z: 0}, 12000).to({x: -1.5, z: 1}, 12000).to({x: -1.6, z: -1}, 12000).to({x: -1, z: -1.8}, 12000).to({x: -0.8, z: -1.2}, 12000);
+		
+		cowboyTweens['petto_rotation'].to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000);
+		
+		cowboyTweens['petto_rotation'].to({z: THREE.Math.degToRad(-45)}, 12000).to({z: THREE.Math.degToRad(45)}, 12000).to({z: THREE.Math.degToRad(-45)}, 12000).to({z: THREE.Math.degToRad(45)}, 12000);
+		
+		if(canShotEnemy) time_shoting_rate += 1;
+		if(time_shoting_rate / 100 == 1) {
+			enemy_shooting = true;
+			time_shoting_rate = 0;
+		}
+		shot_enemy();
 	}
 	// fine animazione cowboy
 	
@@ -252,7 +323,8 @@ var animate = function () {
 
 	if (typeof intersect[4] !== 'undefined') {
 		if (movements[5] == true) {
-			load_object_gltf(scene, 'bullet', false, './gun/bullet.gltf', 0, 0, 0, 0, 0, 0);
+			//load_object_gltf(scene, 'bullet', false, './gun/bullet.gltf', 0, 0, 0, 0, 0, 0);
+			create_bullet(scene, 'bullet', 0.02);
 			// To move the gun together with the camera, but translated of the right position
 			if (scene.getObjectByName('bullet')) {
 				var bulletModel = scene.getObjectByName('bullet');
@@ -287,7 +359,7 @@ var animate = function () {
 					if(enemyLifes == 0) {
 						scene.remove(scene.getObjectByName('cowboy'));
 						console.log('Morto');
-						died = true;
+						died_enemy = true;
 						
 						delete_lights(scene, dirLight, lightAmbient);
 						if (lightOnOff) {
@@ -307,12 +379,19 @@ var animate = function () {
 	
 	
 	// Vite
-	/*
 	healthBarCharacter = document.getElementById("healthBarCharacter");
-	healthBarCharacter.style.width = "20%";
-	healthBarCharacter.style.background = "green";
-	healthBarCharacter.innerHTML ="20%";
-	*/
+	healthBarCharacter.style.width = characterLifes*10 + "%";
+	if(characterLifes >= 8) {
+		healthBarCharacter.style.background = "green";
+	}
+	if(characterLifes <= 3) {
+		healthBarCharacter.style.background = "red";
+	}
+	if (characterLifes < 8 && characterLifes > 3) {
+		healthBarCharacter.style.background = "orange";
+	}
+	healthBarCharacter.innerHTML = characterLifes*10 +"%";
+	
 
 	healthBarEnemy = document.getElementById("healthBarEnemy");
 	healthBarEnemy.style.width = enemyLifes*10 + "%";
