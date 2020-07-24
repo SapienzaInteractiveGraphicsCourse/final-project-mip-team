@@ -40,8 +40,9 @@ export function load_world_gltf(scene, camera, path_gltf_world, start_position_x
     camera.position.y = start_position_y;
     camera.position.z = start_position_z;
     loader.load( path_gltf_world, function ( gltf ) {
-
-    scene.add( gltf.scene );
+	var obj = gltf.scene;
+	obj.name = 'world';
+    scene.add( obj );
 
     }, undefined, function ( error ) {
 
