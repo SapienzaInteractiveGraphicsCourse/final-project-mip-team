@@ -481,7 +481,7 @@
     					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
     					//scene.remove(scene.getObjectByName('dragon'));
     					console.log('Preso');
-              enemyLifes -= 10;
+              enemyLifes -= 1;
               if(enemyLifes == 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
