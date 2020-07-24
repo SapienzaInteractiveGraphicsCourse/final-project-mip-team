@@ -26,5 +26,5 @@ The game is developed using **threejs** library by [Irene Bondanza](bondanza.174
 ## How to play
 
 - **W**, **A**, **S**, **D** to move the character around the map.
-- **ESC** to check the menu and key bindings.
+- **ESC** to check the key bindings.
 - **X/RIGHT-CLICK** to shoot.

@@ -8,7 +8,7 @@
     var objects = [];
     var raycaster;
 
-    var movements = [false,false,false,false];
+    var movements = [false,false,false,false, false];
 
     var prevTime = performance.now();
     var velocity = new THREE.Vector3();
@@ -60,6 +60,7 @@
     var enemy_shooting = false;
     var canShotEnemy = false;
     var time_shoting = 500;
+    var canShot = false;
 
     var sound_game_over, sound_bow;
 
@@ -73,6 +74,7 @@
 
           controls.lock();
           canShotEnemy = true;
+          canShot = true;
 
         }, false );
 
@@ -80,6 +82,8 @@
 
           instructions.style.display = 'none';
           blocker.style.display = 'none';
+          canShotEnemy = true;
+          canShot = true;
 
         } );
 
@@ -87,6 +91,8 @@
 
           blocker.style.display = 'block';
           instructions.style.display = '';
+          canShotEnemy = false;
+          canShot = false;
 
         } );
 
@@ -94,6 +100,10 @@
 
         document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements);}, false );
         document.addEventListener( 'keyup', (event) => {onKeyUp(event,movements);}, false );
+        document.addEventListener( 'click', (event) => {
+          if(canShot && event.which == 1) movements[4] = true;
+        }, false );
+
 
         raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 20, 10 );
     }
@@ -179,7 +189,7 @@
               sound_game_over.play();
               window.setTimeout(function(){
                   window.location.href = '../index.html';
-              }, 1000);
+              }, 2000);
             }
           }
 
@@ -265,6 +275,9 @@
     //Animation
     var animate = function () {
       requestAnimationFrame( animate );
+      if(scene.getObjectByName('world') && scene.getObjectByName('dragon') && scene.getObjectByName('crossbow')) $(".loader").fadeOut("slow");
+
+
 
       if(canShotEnemy) time_shoting_rate += 1;
       if(time_shoting_rate / 100 == 1) {
@@ -481,11 +494,25 @@
     					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
     					//scene.remove(scene.getObjectByName('dragon'));
     					console.log('Preso');
-              enemyLifes -= 1;
+
+              if(intersect[5].object.name == 'head_top' ||
+              intersect[5].object.name == 'head_bottom'){
+                enemyLifes -= 2.5;
+              }
+              else if(intersect[5].object.name == 'torso') {
+                enemyLifes -= 1.5;
+              }
+              else if (intersect[5].object.name == 'wing_left' ||
+                      intersect[5].object.name == 'wing_right') {
+                enemyLifes -= 1;
+              }
+              else enemyLifes -= 0.5;
+
               if(enemyLifes == 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
-                window.location.href = '../index_final_positive.html?light=' + get_light+ '&sex='+get_sex;
+                canShotEnemy = false;
+                window.location.href = '../index_final_positive.html';
               }
     				}
     				scene.remove(scene.getObjectByName('arrow'));
