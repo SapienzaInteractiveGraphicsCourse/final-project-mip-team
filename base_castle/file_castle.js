@@ -508,7 +508,7 @@
               }
               else enemyLifes -= 0.5;
 
-              if(enemyLifes == 0) {
+              if(enemyLifes <= 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
                 canShotEnemy = false;
