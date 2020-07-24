@@ -39,8 +39,8 @@
     var died_enemy_2 = false;
     // variables for crosshair
     var crosshair;
-    var crossColorReady = 0xAAFFAA;
-    var crossColorWait = 0xC9302C;
+    var crossColorReady = 0xE13BFD;
+    var crossColorWait = 0xCE0F0A;
     // variables for sounds
     var soundGameOver;
     var soundArmy;
@@ -66,7 +66,7 @@
     var raycaster2 = new THREE.Raycaster();
     var prevShot = performance.now();
     var nowShot = performance.now();
-    var time_shooting = 1000;
+    var time_shooting = 600;
     var canShot = false;
     // variables used when the enemies shot
     var bulletPositionEnemy, bulletPositionEnemy2;
@@ -161,7 +161,7 @@
       soundGameOver = load_audio(camera, '../sounds/game_over.wav')
       soundArmy = load_audio(camera, '../sounds/shoot.wav')
       // crossair
-      crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.06, 0.06);
+      crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.08, 0.08);
       // controller
       controller();
     }
@@ -380,7 +380,7 @@
       walk()
       if(scene.getObjectByName(name_enemy)) scene.getObjectByName(name_enemy).lookAt(camera.position);
       if(canShotEnemy1) time_shooting_rate += 1;
-      if(time_shooting_rate / 100 == 1) {
+      if(time_shooting_rate / 80 == 1) {
         enemy_shooting_1 = true;
         time_shooting_rate = 0;
       }
@@ -395,7 +395,7 @@
       ArmDx_2.position.z = 0.8;
       if(scene.getObjectByName(name_enemy_2)) scene.getObjectByName(name_enemy_2).lookAt(camera.position);
       if(canShotEnemy2) time_shooting_rate2 += 1;
-      if(time_shooting_rate2 / 186 == 1) {
+      if(time_shooting_rate2 / 166 == 1) {
         enemy_shooting_2 = true;
         time_shooting_rate2 = 0;
       }
