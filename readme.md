@@ -14,6 +14,7 @@ The desert is the first level of the game: this is an hostile environment where 
 ![](images/desert.png)
 ### Nature
 The nature is the second level of the game and can be seen as the level with medium difficulty. Here, there are two woodsmen that reclaim their land. You need to kill them in order to go to the next and last level.
+![](images/image_nature.png)
 ### Castle
 The castle is the third and last level of the game. It was a peaceful medieval town, until one day a dragon showed up. You need to put him down while it casts fireballs in your direction.
 If you succeed, you will finally be the king/queen of the three kingdoms!
