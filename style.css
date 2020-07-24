@@ -60,11 +60,17 @@
   right: 30px;
   width: 300px;
   background-color: grey;
+  text-align: center;
 }
 #healthBarEnemyCharacter {
   position:relative;
   background-color: blue;
   text-align: center;
+}
+#healthBarEnemyCharacter2 {
+	position:relative;
+	background-color: blue;
+	text-align: center;
 }
 
 body {
@@ -105,28 +111,33 @@ body {
 	text-align: center;
 	border: 1px solid white;
 	display: inline-block;
+	cursor: pointer;
 }
 #night {
 	width: 200px;
 	text-align: center;
 	border: 1px solid white;
 	display: inline-block;
+	cursor: pointer;
 }
 #male {
 	width: 200px;
 	text-align: center;
 	border: 1px solid white;
 	display: inline-block;
+	cursor: pointer;
 }
 #female {
 	width: 200px;
 	text-align: center;
 	border: 1px solid white;
 	display: inline-block;
+	cursor: pointer;
 }
 #play {
 	width: 200px;
 	text-align: center;
 	border: 1px solid white;
 	display: inline-block;
+	cursor: pointer;
 }
