@@ -8,7 +8,7 @@
     var objects = [];
     var raycaster;
 
-    var movements = [false,false,false,false,false];
+    var movements = [false,false,false,false];
 
     var prevTime = performance.now();
     var velocity = new THREE.Vector3();
@@ -59,7 +59,7 @@
     var time_shoting_rate = 0;
     var enemy_shooting = false;
     var canShotEnemy = false;
-    var time_shoting = 2000;
+    var time_shoting = 500;
 
     var sound;
 
@@ -92,7 +92,7 @@
 
         scene.add( controls.getObject() );
 
-        document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements,velocity);}, false );
+        document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements);}, false );
         document.addEventListener( 'keyup', (event) => {onKeyUp(event,movements);}, false );
 
         raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 20, 10 );
@@ -123,13 +123,6 @@
         if ( movements[0] || movements[1] ) velocity.z -= direction.z * 400.0 * delta;
         if ( movements[2] || movements[3] ) velocity.x -= direction.x * 400.0 * delta;
 
-        if ( onObject === true ) {
-
-          velocity.y = Math.max( 0, velocity.y );
-          movements[4] = true;
-
-        }
-
         controls.moveRight( - velocity.x * delta );
         controls.moveForward( - velocity.z * delta );
         controls.getObject().position.y += ( velocity.y * delta );
@@ -137,7 +130,6 @@
         if ( controls.getObject().position.y < 10 ) {
           velocity.y = 0;
           controls.getObject().position.y = -17;
-          movements[4] = true;
         }
         prevTime = time;
 
@@ -145,19 +137,24 @@
     }
 
     function shot_enemy(){
+      var weaponModelEnemy = scene.getObjectByName(name_enemy).getObjectByName('torso');
       if (enemy_shooting == true) {
           //create_bullet(scene,name_bullet_enemy)
-          load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', -8, 10, -30, 20, 0, 0);
+          load_object_gltf(scene, 'fire_ball', false, 'fire_ball/fire_ball.gltf', weaponModelEnemy.position.x, weaponModelEnemy.position.y, weaponModelEnemy.position.z, 0,0,0);
 
           // To move the gun together with the camera, but translated of the right position
           if (scene.getObjectByName(name_bullet_enemy)) {
             var bulletModelEnemy = scene.getObjectByName(name_bullet_enemy);
-            var weaponModelEnemy = scene.getObjectByName(name_enemy);
-            bulletModelEnemy.position.copy( weaponModelEnemy.position);
-            bulletModelEnemy.rotation.copy( weaponModelEnemy.rotation);
-            bulletModelEnemy.translateX( -0.75);
-            bulletModelEnemy.translateY( 2.8);
-            bulletModelEnemy.translateZ( 2);
+            //bulletModelEnemy.position.copy( weaponModelEnemy.position);
+            //bulletModelEnemy.rotation.copy( weaponModelEnemy.rotation);
+            /*
+            bulletModelEnemy.translateX( -8);
+            bulletModelEnemy.translateY( -44);
+            bulletModelEnemy.translateZ( -22);
+            */
+            bulletModelEnemy.translateX( -60);
+            bulletModelEnemy.translateY( 25);
+            bulletModelEnemy.translateZ( -140);
           }
         enemy_shooting = false;
       }
@@ -225,10 +222,6 @@
       dirLight.shadow.camera.far = 3500;
       dirLight.shadow.bias = - 0.0001;
 
-      /*
-      dirLightHeper = new THREE.DirectionalLightHelper( dirLight, 10 );
-      scene.add( dirLightHeper );
-      */
 
       hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
       hemiLight.color.setHSL( 0.6, 1, 0.6 );
@@ -245,7 +238,8 @@
       //Load environment: the y position should coincide with controls.getObject().position.y
       load_world_gltf(scene, camera, 'world/source/tutorial_castle_town.gltf',-10,-17,50);
       //Load other objects
-      load_object_gltf(scene, 'dragon', false, 'dragon/dragon.gltf', -8, 18, -60, 20, 0, 0);
+      //load_object_gltf(scene, 'dragon', true, 'dragon/dragon.gltf', -8, 25, -60, 30, 0, 0);
+      load_object_gltf(scene, 'dragon', true, 'dragon/dragon.gltf', -60, 25, -140, 36, 0, 0);
       load_object_gltf(scene, 'crossbow', false, 'crossbow/crossbow.gltf', 0, 0, 0, 0, 0, 0);
 
 
@@ -268,32 +262,174 @@
     var animate = function () {
       requestAnimationFrame( animate );
 
+      if(canShotEnemy) time_shoting_rate += 1;
+      if(time_shoting_rate / 100 == 1) {
+        enemy_shooting = true;
+        time_shoting_rate = 0;
+      }
+      if (scene.getObjectByName('dragon')){
+        shot_enemy();
+      }
+
       // Check if the object 'dragon' is loaded
       if (scene.getObjectByName('dragon') && alreadyLoaded == false) {
         alreadyLoaded = true;
-        var dragonModel = scene.getObjectByName('dragon');
-
+        dragonModel = scene.getObjectByName('dragon');
         //Create a tween objects
         dragonTweens['wing_left_joint_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_left_joint').rotation);
         dragonTweens['wing_right_joint_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('wing_right_joint').rotation);
         dragonTweens['torso_position'] = new createjs.Tween.get(dragonModel.getObjectByName('torso').position);
+        dragonTweens['torso_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('torso').rotation);
+        dragonTweens['tail_1_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('tail_1').rotation);
+        dragonTweens['tail_3_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('tail_3').rotation);
+        dragonTweens['head_lower_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('head_lower').rotation);
+        dragonTweens['neck_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('neck').rotation);
+        dragonTweens['head_top_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('head_top').rotation);
+
+        dragonTweens['arm_left_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('arm_left').rotation);
+        dragonTweens['arm_right_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('arm_right').rotation);
+        dragonTweens['leg_left_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('arm_left').rotation);
+        dragonTweens['leg_right_rotation'] = new createjs.Tween.get(dragonModel.getObjectByName('arm_right').rotation);
+
+
       }
 
       // If the model is loaded, the tween is created too and we can use it
       if (alreadyLoaded == true) {
+        //console.log(dragonModel.getObjectByName('torso').position);
         // Animate the tween z axis for 2s (2K ms) and when it's done, do the same in the opposite direction.
-        dragonTweens['wing_left_joint_rotation'].to({y: THREE.Math.degToRad(12)}, 2000).to({y: THREE.Math.degToRad(-12)}, 2000);
-        dragonTweens['wing_right_joint_rotation'].to({y: THREE.Math.degToRad(-12)}, 2000).to({y: THREE.Math.degToRad(12)}, 2000);
+
+        dragonTweens['wing_left_joint_rotation']
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(0)}, 4000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(0)}, 4000);
+
+
+        dragonTweens['wing_right_joint_rotation']
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(12)}, 2000)
+          .to({y: THREE.Math.degToRad(0)}, 4000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(-20)}, 2000)
+          .to({y: THREE.Math.degToRad(20)}, 2000)
+          .to({y: THREE.Math.degToRad(0)}, 4000);
+
+
         // Meanwhile, move the torso in the y direction
-        dragonTweens['torso_position'].to({y: 2.5}, 2000).to({y: -2.5}, 2000);
-        if(canShotEnemy) time_shoting_rate += 1;
-        if(time_shoting_rate / 100 == 1) {
-          enemy_shooting = true;
-          time_shoting_rate = 0;
-        }
-        if (scene.getObjectByName('dragon')){
-          shot_enemy();
-        }
+        dragonTweens['torso_position']
+          .to({y: 3.5}, 2000)
+          .to({y: -3.5}, 2000)
+          .to({y: 3.5}, 2000)
+          .to({y: -3.5}, 2000)
+          .to({x: 30}, 4000)
+          .to({y: 0}, 2000)
+          .to({y: 3.5}, 2000)
+          .to({y: -3.5}, 2000)
+          .to({y: 3.5}, 2000)
+          .to({y: -3.5}, 2000)
+          .to({x: -20, y:-3.5}, 4000);
+
+        dragonTweens['torso_rotation']
+          .to({y: 0}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: THREE.Math.degToRad(-30)}, 4000)
+          .to({y: THREE.Math.degToRad(0),z: THREE.Math.degToRad(30)}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: 0}, 2000)
+          .to({y: THREE.Math.degToRad(30)}, 4000)
+          .to({y: THREE.Math.degToRad(0),z: THREE.Math.degToRad(-30)}, 2000);
+
+          dragonTweens['tail_1_rotation']
+            .to({z: THREE.Math.degToRad(-15)}, 2000)
+            .to({z: THREE.Math.degToRad(15)}, 2000)
+            .to({z: THREE.Math.degToRad(-15)}, 2000)
+            .to({z: THREE.Math.degToRad(15)}, 2000)
+            .to({z: THREE.Math.degToRad(-15)}, 4000);
+          dragonTweens['tail_3_rotation']
+            .to({z: THREE.Math.degToRad(30)}, 2000)
+            .to({z: THREE.Math.degToRad(-30)}, 2000)
+            .to({z: THREE.Math.degToRad(30)}, 2000)
+            .to({z: THREE.Math.degToRad(-30)}, 2000)
+            .to({z: THREE.Math.degToRad(30)}, 4000);
+          dragonTweens['head_lower_rotation']
+            .to({x: THREE.Math.degToRad(10)}, 2000)
+            .to({x: THREE.Math.degToRad(-10)}, 2000)
+            .to({x: THREE.Math.degToRad(10)}, 2000)
+            .to({x: THREE.Math.degToRad(-10)}, 2000)
+            .to({x: THREE.Math.degToRad(10)}, 4000);
+
+
+            dragonTweens['neck_rotation']
+              .to({z: THREE.Math.degToRad(5)}, 2000)
+              .to({z: THREE.Math.degToRad(-5)}, 2000);
+
+            dragonTweens['head_top_rotation']
+              .to({z: THREE.Math.degToRad(10)}, 2000)
+              .to({z: THREE.Math.degToRad(-10)}, 2000);
+
+            dragonTweens['arm_left_rotation']
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(-30)}, 4000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(30)}, 4000);
+
+            dragonTweens['arm_right_rotation']
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(-30)}, 4000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(30)}, 4000);
+
+            dragonTweens['leg_left_rotation']
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(-30)}, 4000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(0)}, 2000)
+              .to({z: THREE.Math.degToRad(30)}, 4000);
+
+            dragonTweens['leg_right_rotation']
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(-30)}, 4000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(0)}, 2000)
+            .to({z: THREE.Math.degToRad(30)}, 4000);
+
       }
 
       motion();
@@ -306,7 +442,7 @@
     	intersect = raycaster2.intersectObjects( scene.children, true );
 
       if (typeof intersect[4] !== 'undefined') {
-    		if (movements[5] == true) {
+    		if (movements[4] == true) {
     			load_object_gltf(scene, 'arrow', false, 'arrow/arrow.gltf', 0, 0, 0, 0, 0, 0);
           // To move the crossbow together with the camera, but translated of the right position
     			if (scene.getObjectByName('arrow')) {
@@ -319,7 +455,7 @@
     				arrowModel.translateZ( 0 );
             sound.play();
     			}
-    			movements[5] = false;
+    			movements[4] = false;
     		}
     		if (arrowModel && !arrowLoaded) {
     			arrowPosition = new createjs.Tween.get(arrowModel.position);
