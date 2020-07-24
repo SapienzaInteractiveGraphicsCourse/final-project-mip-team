@@ -26,7 +26,9 @@ export function load_world(scene, camera, path_obj_world, path_mtl_world, start_
       materials.preload();
       loader.setMaterials(materials);
       loader.load(path_obj_world, (object) => {
-        scene.add(object);
+        var obj = object
+        obj.name = "world"
+        scene.add(obj);
       },onProgress,onError);
     });
 }
@@ -96,7 +98,7 @@ export function add_lights(scene, light1, light2){
   scene.background = new THREE.Color( 0x74D7FF );
 }
 
-export function onKeyDown(event,movements,velocity) {
+export function onKeyDown(event,movements) {
   switch ( event.keyCode ) {
     case 38: // up
     case 87: // w
@@ -114,13 +116,9 @@ export function onKeyDown(event,movements,velocity) {
     case 68: // d
       movements[3] = true;
       break;
-    case 32: // space
-      if ( movements[4] === true ) velocity.y += 180;
-      movements[4] = false;
+    case 88: // x
+      movements[4] = true;
       break;
-	case 88: // x
-	  movements[5] = true;
-	  break;
   }
 }
 
@@ -143,7 +141,7 @@ export function onKeyUp( event, movements ) {
       movements[3] = false;
       break;
 	case 88: // x
-	  movements[5] = false;
+	  movements[4] = false;
 	  break;
   }
 };
@@ -256,7 +254,6 @@ export function create_bullet(scene,name_bullet,radius = null){
   sphere.name = name_bullet
   scene.add(sphere);
 }
-
 export function load_audio (camera, path_audio) {
   // create an AudioListener and add it to the camera
   var listener = new THREE.AudioListener();

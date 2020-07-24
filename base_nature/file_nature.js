@@ -7,7 +7,7 @@
     var objects = [];
     var raycaster;
 
-    var movements = [false,false,false,false,false,false];
+    var movements = [false,false,false,false,false];
 
     var hemiLight, dirLight, lightAmbient;
 
@@ -90,8 +90,7 @@
     function controller(){
       controls = new PointerLockControls( camera, document.body );
 				blocker = document.getElementById( 'blocker' );
-				instructions = document.getElementById( 'instructions' );
-
+				instructions = document.getElementById( 'instructions');
 				instructions.addEventListener( 'click', function () {
           controls.lock();
 				}, false );
@@ -112,10 +111,10 @@
 
 				scene.add( controls.getObject() );
 
-				document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements,velocity);}, false );
+				document.addEventListener( 'keydown', (event) => {onKeyDown(event,movements);}, false );
         document.addEventListener( 'keyup', (event) => {onKeyUp(event,movements);}, false );
         document.addEventListener( 'click', (event) => {
-          if(canShot && event.which == 1) movements[5] = true;
+          if(canShot && event.which == 1) movements[4] = true;
         }, false );
 
 				raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 20, 10 );
@@ -169,7 +168,7 @@
       camera.rotation.y = start_rotation_player.y
       load_world(scene, camera, './nature.obj','./nature.mtl', start_position_player.x, start_position_player.y, start_position_player.z);
       load_object_gltf(scene, name_gun,false,'./gun.gltf',0,4,-15,0,45,0);
-      load_object_gltf(scene, name_enemy,false,'./woodsman.gltf',0,0,-15,0,90,0);
+      load_object_gltf(scene, name_enemy,true,'./woodsman.gltf',0,0,-15,0,90,0);
 
       document.getElementById("lightOnOff").onclick = function() {
         lightOnOff = !lightOnOff;
@@ -215,10 +214,7 @@
         if ( movements[0] || movements[1] ) velocity.z -= direction.z * 400.0 * delta;
         if ( movements[2] || movements[3] ) velocity.x -= direction.x * 400.0 * delta;
 
-        if ( onObject === true ) {
-          velocity.y = Math.max( 0, velocity.y );
-          movements[4] = true;
-        }
+
 
         controls.moveRight( - velocity.x * delta );
         controls.moveForward( - velocity.z * delta );
@@ -227,7 +223,6 @@
         if ( controls.getObject().position.y < start_position_player.y ) {
           velocity.y = 0;
           controls.getObject().position.y = start_position_player.y;
-          movements[4] = true;
         }
         prevTime = time;
 
@@ -239,7 +234,7 @@
       raycaster2.set(raycasterOrigin2, worldDirection2);
       intersect = raycaster2.intersectObjects( scene.children, true );
       if (typeof intersect[5] !== 'undefined') {
-        if (movements[5] == true) {
+        if (movements[4] == true) {
           var temp = nowShot;
           nowShot = performance.now()
           if((nowShot-prevShot) >= time_shoting){
@@ -256,7 +251,7 @@
               bulletModel.translateZ( -2.2 );
             } 
           }
-          movements[5] = false;
+          movements[4] = false;
         }
         if (bulletModel && !bulletLoaded) {
           crosshair.material = new THREE.LineBasicMaterial({ color: crossColorWait });
@@ -274,13 +269,22 @@
           (scene.getObjectByName(name_bullet).position.z == toPosZ)){
             if((intersect[5].object.name !== name_bullet) &&  (scene.getObjectByName(name_enemy)) &&
             (typeof (scene.getObjectByName(name_enemy)).getObjectByName(intersect[5].object.name) !== 'undefined')){
-              console.log('Preso');
-              enemyLifes -= 1;
-              if(enemyLifes < 2){
-                load_object_gltf(scene, name_enemy_2,false,'./woodsman.gltf',0,0,15,0,90,0);
+              console.log(intersect[5].object.name);
+              if(intersect[5].object.name == 'Head' || 
+              intersect[5].object.name == 'Hat' || 
+              intersect[5].object.name == 'LIps' || 
+              intersect[5].object.name == 'EyeDx' || 
+              intersect[5].object.name == 'EyeSx' || 
+              intersect[5].object.name == 'Hair'){
+                enemyLifes -= 2;
               }
+              else enemyLifes -= 1;
+              /*if(enemyLifes < 2){
+                load_object_gltf(scene, name_enemy_2,false,'./woodsman.gltf',0,0,15,0,90,0);
+              }*/
               if(enemyLifes == 0) {
                 scene.remove(scene.getObjectByName(name_enemy));
+                scene.remove(scene.getObjectByName(name_bullet_enemy));
                 console.log('Morto');
                 died_enemy = true;
                 canShotEnemy1 = false;
@@ -289,7 +293,7 @@
                   scene.add(hemiLight);
                 }
                 // Add spotlight
-                load_object_gltf(scene, 'spot', false, './spotlight/spotlight.gltf', 76, 20,-97, 0, -90, 0);
+                load_object_gltf(scene, 'spot', false, './spotlight.gltf', 76, 20,-97, 0, -90, 0);
                 console.log(scene.getObjectByName('spot'))
               }
             }
@@ -303,8 +307,10 @@
     var animate = function () {
       requestAnimationFrame( animate );
       motion();
+      if(scene.getObjectByName('world') && scene.getObjectByName(name_enemy) && scene.getObjectByName(name_gun)) $(".loader").fadeOut("slow");
       if((camera.position.x >= 72.50) && (camera.position.z <= -88.28)) {
         window.location.href = '../base_castle/index_castle.html?light=' + get_light+ '&sex='+get_sex;
+        $(".loader").fadeIn("slow");
       }
       loading_first_enemy()
       loading_second_enemy()
@@ -345,7 +351,7 @@
       tweenArm.dx.position.to({x: -0.9, y: 0.4, z: 0.8},1000);
     }
     function rotate_enemy(which_enemy){
-      scene.getObjectByName(which_enemy).lookAt(camera.position);
+     if(scene.getObjectByName(which_enemy)) scene.getObjectByName(which_enemy).lookAt(camera.position);
       
     }
 
