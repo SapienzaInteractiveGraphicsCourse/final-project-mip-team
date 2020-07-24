@@ -61,7 +61,7 @@
     var canShotEnemy = false;
     var time_shoting = 500;
 
-    var sound;
+    var sound_game_over, sound_bow;
 
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -176,8 +176,10 @@
             if(characterLifes == 0) {
               console.log('Game over');
               died = true;
-              //load_audio(...)
-              window.location.href = '../index.html';
+              sound_game_over.play();
+              window.setTimeout(function(){
+                  window.location.href = '../index.html';
+              }, 1000);
             }
           }
 
@@ -251,7 +253,9 @@
     		}
 
       crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.25, 0.25);
-      sound = load_audio(camera, '../sounds/bow.mp3');
+      sound_bow = load_audio(camera, '../sounds/bow.mp3');
+      sound_game_over = load_audio(camera, '../sounds/game_over.wav');
+
 
       controller();
     }
@@ -453,7 +457,7 @@
     				arrowModel.translateX( 0 );
     				arrowModel.translateY( 0 );
     				arrowModel.translateZ( 0 );
-            sound.play();
+            sound_bow.play();
     			}
     			movements[4] = false;
     		}
@@ -477,7 +481,7 @@
     					//console.log(scene.getObjectByName('dragon').getObjectByName(intersect[0].object.name));
     					//scene.remove(scene.getObjectByName('dragon'));
     					console.log('Preso');
-              enemyLifes -= 1;
+              enemyLifes -= 10;
               if(enemyLifes == 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
