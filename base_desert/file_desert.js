@@ -148,7 +148,7 @@ function init(){
 	//Create the scene
 	scene = new THREE.Scene();
 	scene.background = new THREE.Color( 0x74D7FF ); // sfondo per avere effetto cielo di giorno
-	
+
 	// Lights
 	dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
 	dirLight.color.setHSL( 0.1, 1, 0.95 );
@@ -184,25 +184,25 @@ function init(){
 	// Add desert
 	load_world_gltf(scene, camera, './desert.gltf', -8, 0.6, 0);
 	camera.rotation.y = -1.57;
-	
+
 	// Add enemy
 	load_object_gltf(scene, 'cowboy', true, './enemy/cowboy.gltf', 0, 0.2, 0, 0, -90, 0);
-	
+
 	// Add gun
 	load_object_gltf(scene, 'gun', false, './gun/gun.gltf', -7, 0.4, 0.4, 0, -90, 0);
-	
-	
+
+
 	if(get_light=='night') {
 		delete_lights( scene, hemiLight, lightAmbient);
 	}
 	else {
 		add_lights (scene, hemiLight, lightAmbient);
 	}
-	
+
 	crosshair = add_crosshair(crosshair, camera, collisionDistance, crossColorReady, 0.06, 0.06);
 	sound = load_audio(camera, '../sounds/shoot.wav');
 	sound_gameover = load_audio(camera, '../sounds/game_over.wav');
-	
+
 	controller();
 }
 
@@ -219,7 +219,7 @@ function shot_enemy(){
 			bulletModelEnemy.translateX( -0.18 );
 			bulletModelEnemy.translateY( -0.1 );
 			bulletModelEnemy.translateZ( -0.18 );
-		} 
+		}
 		enemy_shooting = false;
 	}
 	if (bulletModelEnemy && !bulletLoadedEnemy) {
@@ -231,7 +231,7 @@ function shot_enemy(){
 	}
 	if (scene.getObjectByName(name_bullet_enemy) && bulletLoadedEnemy) {
 		bulletPositionEnemy.to({x:toPosXEnemy, y:toPosYEnemy, z:toPosZEnemy}, time_shoting);
-		if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) && 
+		if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) &&
 			(scene.getObjectByName(name_bullet_enemy).position.y == toPosYEnemy) &&
 			(scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
 			if(camera.position.x == toPosXEnemy && camera.position.y == toPosYEnemy && camera.position.z == toPosZEnemy){
@@ -254,11 +254,11 @@ function shot_enemy(){
 var animate = function () {
 	requestAnimationFrame( animate );
 	motion();
-	
+
 	if(scene.getObjectByName('world') && scene.getObjectByName('cowboy') && scene.getObjectByName('gun')) $(".loader").fadeOut("slow");
-	
+
 	// If enemy is died, redirect to the base nature when the camera passes the portail
-	if(died_enemy && (camera.position.x >= 4) && (camera.position.z <= -3) && (camera.position.z >= -4)) {
+	if(died_enemy && (camera.position.x >= 4) && (camera.position.z <= -2.5) && (camera.position.z >= -4)) {
 		window.location.href = '../base_nature/index_nature.html?light=' + get_light+ '&sex='+get_sex;
 		$(".loader").fadeIn("slow");
 	}
@@ -274,39 +274,39 @@ var animate = function () {
 		//Create tween objects
 		cowboyTweens['spallaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaDX').rotation);
 		cowboyTweens['spallaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('spallaSX').rotation);
-		
+
 		cowboyTweens['petto_position'] = new createjs.Tween.get(cowboyModel.getObjectByName('petto').position);
 		cowboyTweens['petto_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('petto').rotation);
-		
+
 		cowboyTweens['ancaDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaDX').rotation);
 		cowboyTweens['ancaSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ancaSX').rotation);
-		
+
 		cowboyTweens['ginocchioDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ginocchioDX').rotation);
 		cowboyTweens['ginocchioSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('ginocchioSX').rotation);
-		
+
 		cowboyTweens['piedeDX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeDX').rotation);
 		cowboyTweens['piedeSX_rotation'] = new createjs.Tween.get(cowboyModel.getObjectByName('piedeSX').rotation);
 	}
-	
+
 	// If the model is loaded, the tween is created too and we can use it
 	if (alreadyLoaded == true) {
 		// Animate the tween z axis for 1s (1K ms) and when it's done, do the same in the opposite direction.
 		cowboyTweens['spallaDX_rotation'].to({x: THREE.Math.degToRad(20)}, 1000).to({x: THREE.Math.degToRad(-20)}, 1000);
-		
+
 		cowboyTweens['ancaDX_rotation'].to({x: THREE.Math.degToRad(-115)}, 1000).to({x: THREE.Math.degToRad(-80)}, 1000);
 		cowboyTweens['ancaSX_rotation'].to({x: THREE.Math.degToRad(-80)}, 1000).to({x: THREE.Math.degToRad(-115)}, 1000);
-		
+
 		cowboyTweens['ginocchioDX_rotation'].to({x: THREE.Math.degToRad(0)}, 1000).to({x: THREE.Math.degToRad(30)}, 1000);
 		cowboyTweens['ginocchioSX_rotation'].to({x: THREE.Math.degToRad(30)}, 1000).to({x: THREE.Math.degToRad(0)}, 1000);
-		
+
 		cowboyTweens['piedeDX_rotation'].to({x: THREE.Math.degToRad(10)}, 1000).to({x: THREE.Math.degToRad(-10)}, 1000);
 		cowboyTweens['piedeSX_rotation'].to({x: THREE.Math.degToRad(-10)}, 1000).to({x: THREE.Math.degToRad(10)}, 1000);
-		
+
 		// Meanwhile, move the cowboy (petto is the root) in the x and z directions
 		cowboyTweens['petto_position'].to({x:1.5, z: 2}, 12000).to({x: 1, z: 0}, 12000).to({x: -1.5, z: 1}, 12000).to({x: -1.6, z: -1}, 12000).to({x: -1, z: -1.8}, 12000).to({x: -0.8, z: -1.2}, 12000);
-		
+
 		cowboyTweens['petto_rotation'].to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000).to({y: THREE.Math.degToRad(2)}, 1000).to({y: THREE.Math.degToRad(-2)}, 1000);
-		
+
 		cowboyTweens['petto_rotation'].to({z: THREE.Math.degToRad(-45)}, 12000).to({z: THREE.Math.degToRad(45)}, 12000).to({z: THREE.Math.degToRad(-45)}, 12000).to({z: THREE.Math.degToRad(45)}, 12000);
 
 		if(canShotEnemy) time_shoting_rate += 1;
@@ -319,7 +319,7 @@ var animate = function () {
 		}
 	}
 	// fine animazione cowboy
-	
+
 
 	// Inizio animazione proiettile (se si clicca x)
 	camera.getWorldDirection(worldDirection2);
@@ -340,7 +340,7 @@ var animate = function () {
 				bulletModel.translateX( 0 );
 				bulletModel.translateY( 0.028 );
 				bulletModel.translateZ( -0.15 );
-				
+
 				sound.play();
 			}
 			movements[4] = false;
@@ -354,10 +354,10 @@ var animate = function () {
 		}
 		if (scene.getObjectByName('bullet') && bulletLoaded) {
 			crosshair.material = new THREE.LineBasicMaterial({ color: crossColorWait });
-			
+
 			bulletPosition.to({x:toPosX, y:toPosY, z:toPosZ}, 1000);
 
-			if ((scene.getObjectByName('bullet').position.x == toPosX) && 
+			if ((scene.getObjectByName('bullet').position.x == toPosX) &&
 			(scene.getObjectByName('bullet').position.y == toPosY) &&
 			(scene.getObjectByName('bullet').position.z == toPosZ)){
 				if((intersect[4].object.name !== 'Sphere001') &&  (scene.getObjectByName('cowboy')) &&
@@ -370,7 +370,7 @@ var animate = function () {
 						console.log('Morto');
 						died_enemy = true;
 						if (scene.getObjectByName(name_bullet_enemy)) {scene.remove(scene.getObjectByName(name_bullet_enemy));}
-						
+
 						delete_lights(scene, dirLight, lightAmbient);
 						if (get_light == 'night') {
 							scene.add(hemiLight);
@@ -386,8 +386,8 @@ var animate = function () {
 		}
 	}
 	// fine animazione proiettile
-	
-	
+
+
 	// Vite
 	healthBarCharacter = document.getElementById("healthBarCharacter");
 	healthBarCharacter.style.width = characterLifes*10 + "%";
@@ -401,7 +401,7 @@ var animate = function () {
 		healthBarCharacter.style.background = "orange";
 	}
 	healthBarCharacter.innerHTML = characterLifes*10 +"%";
-	
+
 
 	healthBarEnemy = document.getElementById("healthBarEnemy");
 	healthBarEnemy.style.width = enemyLifes*10 + "%";
@@ -416,9 +416,9 @@ var animate = function () {
 	}
 	healthBarEnemy.innerHTML = enemyLifes*10 +"%";
 	// fine vite
-	
+
 	check_collisions(controls, camera, scene, collisions, collisionDistance);
-	
+
 	renderer.render(scene, camera);
 }
 

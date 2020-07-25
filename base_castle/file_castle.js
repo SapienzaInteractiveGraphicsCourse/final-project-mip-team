@@ -497,22 +497,22 @@
 
               if(intersect[5].object.name == 'head_top' ||
               intersect[5].object.name == 'head_bottom'){
-                enemyLifes -= 2.5;
+                enemyLifes -= 2;
               }
               else if(intersect[5].object.name == 'torso') {
-                enemyLifes -= 1.5;
+                enemyLifes -= 1;
               }
               else if (intersect[5].object.name == 'wing_left' ||
                       intersect[5].object.name == 'wing_right') {
-                enemyLifes -= 1;
+                enemyLifes -= 0.5;
               }
-              else enemyLifes -= 0.5;
+              else enemyLifes -= 0.25;
 
               if(enemyLifes <= 0) {
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
                 canShotEnemy = false;
-                window.location.href = '../index_final_positive.html';
+                window.location.href = '../index_final_positive.html?light=' + light+ '&sex='+sex;
               }
     				}
     				scene.remove(scene.getObjectByName('arrow'));
