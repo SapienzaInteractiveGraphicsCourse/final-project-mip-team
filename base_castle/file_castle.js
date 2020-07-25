@@ -40,7 +40,7 @@
     var died = false;
     var died_enemy = false;
     var characterLifes = 10;
-    var enemyLifes = 10;
+    var enemyLifes = 1;
 
     var dirLight, hemiLight, lightAmbient;
 
@@ -512,7 +512,7 @@
                 scene.remove(scene.getObjectByName('dragon'));
                 scene.remove(scene.getObjectByName('fire_ball'));
                 canShotEnemy = false;
-                window.location.href = '../index_final_positive.html?light=' + light+ '&sex='+sex;
+                window.location.href = '../index_final_positive.html?light=' + get_light+ '&sex='+get_sex;
               }
     				}
     				scene.remove(scene.getObjectByName('arrow'));

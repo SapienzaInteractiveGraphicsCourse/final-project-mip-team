@@ -2,7 +2,7 @@
 
 ## The project
 
-**The three kingdoms** is the final project of the Interactive Graphics course held by Prof. Marco Schaerf in Sapienza , University of Rome. It is a first person shooter game where the user play as a character that needs to take back its throne in all of the three kingdoms.
+**The three kingdoms** is the final project of Interactive Graphics course held by Prof. Marco Schaerf in La Sapienza, University of Rome. It is a first person shooter game where the user play as a character that needs to take back its throne in all of the three kingdoms.
 
 ## The kingdoms
 Each kingdom is a level of the game (from the easiest to the hardest one).
@@ -29,3 +29,10 @@ The game is developed using **threejs** library by [Irene Bondanza](bondanza.174
 - **W**, **A**, **S**, **D** to move the character around the map.
 - **ESC** to check the key bindings.
 - **X/RIGHT-CLICK** to shoot.
+
+## Known bugs
+- Sometimes the shoot (both from enemy and character) doesn't hit the target.
+- Character may get stuck in some particular spot due to collisions.
+
+## Play the Game
+The game is accessible from this [link]().
