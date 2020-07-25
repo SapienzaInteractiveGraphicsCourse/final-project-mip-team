@@ -5,7 +5,6 @@
 
     // ambient variables
     var renderer, scene, camera, controls;
-    var objects = [];
     var raycaster;
     var hemiLight, dirLight, lightAmbient;
     // get values of user's preference and variables to store html div
@@ -66,8 +65,9 @@
     var raycaster2 = new THREE.Raycaster();
     var prevShot = performance.now();
     var nowShot = performance.now();
-    var time_shooting = 600;
+    var time_shooting = 200;
     var canShot = false;
+    var damage = 0.75;
     // variables used when the enemies shot
     var bulletPositionEnemy, bulletPositionEnemy2;
     var bulletLoadedEnemy = false, bulletLoadedEnemy2 = false;
@@ -75,6 +75,7 @@
     var time_shooting_rate = 0, time_shooting_rate2 = 0;
     var enemy_shooting_1 = false,  enemy_shooting_2 = false;
     var canShotEnemy1 = false,  canShotEnemy2 = false;
+    var damage_enemy1 = 1.25, damage_enemy2 = 1.75;
     // function toset up the controls for user's movements
     function controller(){
       controls = new PointerLockControls( camera, document.body );
@@ -170,7 +171,6 @@
       if ( controls.isLocked === true ) {
         raycaster.ray.origin.copy( controls.getObject().position );
         raycaster.ray.origin.y -= 10;
-        var intersections = raycaster.intersectObjects( objects );
         var time = performance.now();
         var delta = ( time - prevTime ) / 1000;
         velocity.x -= velocity.x * 10.0 * delta;
@@ -179,8 +179,8 @@
         direction.z = collisions['front']*Number( movements[0] ) - collisions['back']*Number( movements[1] );
         direction.x = collisions['right']*Number( movements[3] ) - collisions['left']*Number( movements[2] );
         direction.normalize();
-        if ( movements[0] || movements[1] ) velocity.z -= direction.z * 400.0 * delta;
-        if ( movements[2] || movements[3] ) velocity.x -= direction.x * 400.0 * delta;
+        if ( movements[0] || movements[1] ) velocity.z -= direction.z * 500.0 * delta;
+        if ( movements[2] || movements[3] ) velocity.x -= direction.x * 100.0 * delta;
         controls.moveRight( - velocity.x * delta );
         controls.moveForward( - velocity.z * delta );
         controls.getObject().position.y += (velocity.y * delta );
@@ -195,7 +195,8 @@
     var animate = function () {
       requestAnimationFrame( animate );
       motion();
-      if(scene.getObjectByName('world') && scene.getObjectByName(name_enemy) && scene.getObjectByName(name_gun)) $(".loader").fadeOut("slow");
+      if(scene.getObjectByName('world') && scene.getObjectByName(name_enemy) && scene.getObjectByName(name_gun) &&
+      loaded_1 && loaded_2) $(".loader").fadeOut("slow");
       if((camera.position.x >= 72.50) && (camera.position.z <= -88.28) && died_enemy && died_enemy_2) {
         window.location.href = '../base_castle/index_castle.html?light=' + get_light+ '&sex='+get_sex;
         $(".loader").fadeIn("slow");
@@ -274,7 +275,6 @@
         }
         if (scene.getObjectByName(name_bullet) && bulletLoaded) {
           bulletPosition.to({x:toPosX, y:toPosY, z:toPosZ}, time_shooting);
-    
           if ((scene.getObjectByName(name_bullet).position.x == toPosX) && 
           (scene.getObjectByName(name_bullet).position.y == toPosY) &&
           (scene.getObjectByName(name_bullet).position.z == toPosZ)){
@@ -287,14 +287,13 @@
               intersect[5].object.name == 'EyeDx' || 
               intersect[5].object.name == 'EyeSx' || 
               intersect[5].object.name == 'Hair'){
-                enemyLifes -= 2;
+                enemyLifes -= 1,5*damage;
               }
-              else enemyLifes -= 1;
+              else enemyLifes -= damage;
               if(enemyLifes <= 0) {
                 enemyLifes = 0
                 scene.remove(scene.getObjectByName(name_enemy));
                 scene.remove(scene.getObjectByName(name_bullet_enemy));
-                console.log('Morto');
                 died_enemy = true;
                 canShotEnemy1 = false;
                 enemies_dead();
@@ -309,21 +308,21 @@
               intersect[5].object.name == 'EyeDx2' || 
               intersect[5].object.name == 'EyeSx2' || 
               intersect[5].object.name == 'Hair2'){
-                enemyLifes2 -= 2;
+                enemyLifes2 -= 1.5*damage;
               }
-              else enemyLifes2 -= 1;
+              else enemyLifes2 -= damage;
               if(enemyLifes2 <= 0) {
                 enemyLifes2 = 0
                 scene.remove(scene.getObjectByName(name_enemy_2));
                 scene.remove(scene.getObjectByName(name_bullet_enemy_2));
-                console.log('Morto');
                 died_enemy_2 = true;
                 canShotEnemy2 = false;
                 enemies_dead();
               }
             }
             scene.remove(scene.getObjectByName(name_bullet));
-            bulletLoaded = false;
+            bulletLoaded = false;            
+            crosshair.material = new THREE.LineBasicMaterial({ color: crossColorReady });
           }
         }
         }
@@ -342,7 +341,7 @@
       if (characterLifes < 8 && characterLifes > 3) {
         healthBarCharacter.style.background = "orange";
       }
-      healthBarCharacter.innerHTML = characterLifes*10 +"%";
+      healthBarCharacter.innerHTML = Math.round(characterLifes*10) +"%";
       // first enemy
       healthBarEnemy = document.getElementById("healthBarEnemy");
       healthBarEnemy.style.width = enemyLifes*10 + "%";
@@ -355,7 +354,7 @@
       if (enemyLifes < 8 && enemyLifes > 3) {
         healthBarEnemy.style.background = "orange";
       }
-      healthBarEnemy.innerHTML = enemyLifes*10 +"%";
+      healthBarEnemy.innerHTML = Math.round(enemyLifes*10) +"%";
       // second enemy
       healthBarEnemy2 = document.getElementById("healthBarEnemy2");
       healthBarEnemy2.style.width = enemyLifes2*10 + "%";
@@ -368,7 +367,7 @@
       if (enemyLifes2 < 8 && enemyLifes2 > 3) {
         healthBarEnemy2.style.background = "orange";
       }
-      healthBarEnemy2.innerHTML = enemyLifes2*10 +"%";
+      healthBarEnemy2.innerHTML = Math.round(enemyLifes2*10) +"%";
     }
     // animation of first enemy
     function enemy_animation(){
@@ -380,7 +379,7 @@
       walk()
       if(scene.getObjectByName(name_enemy)) scene.getObjectByName(name_enemy).lookAt(camera.position);
       if(canShotEnemy1) time_shooting_rate += 1;
-      if(time_shooting_rate / 80 == 1) {
+      if(time_shooting_rate / 46 == 1) {
         enemy_shooting_1 = true;
         time_shooting_rate = 0;
       }
@@ -395,7 +394,7 @@
       ArmDx_2.position.z = 0.8;
       if(scene.getObjectByName(name_enemy_2)) scene.getObjectByName(name_enemy_2).lookAt(camera.position);
       if(canShotEnemy2) time_shooting_rate2 += 1;
-      if(time_shooting_rate2 / 166 == 1) {
+      if(time_shooting_rate2 / 72 == 1) {
         enemy_shooting_2 = true;
         time_shooting_rate2 = 0;
       }
@@ -442,12 +441,13 @@
         if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) && 
         (scene.getObjectByName(name_bullet_enemy).position.y == toPosYEnemy) &&
         (scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
-          if(camera.position.x == toPosXEnemy && camera.position.y == toPosYEnemy && camera.position.z == toPosZEnemy){
-            console.log('Preso')
-            characterLifes -= 0.5;
+          var range_camera = 0.8;
+          if(camera.position.x >= toPosXEnemy - range_camera && camera.position.x <= toPosXEnemy + range_camera && 
+            camera.position.y >= toPosYEnemy - range_camera && camera.position.y <= toPosYEnemy + range_camera && 
+            camera.position.z >= toPosZEnemy - range_camera && camera.position.z <= toPosZEnemy + range_camera){
+            characterLifes -= damage_enemy1;
             if(characterLifes <= 0) {
               characterLifes = 0;
-              console.log('Game over');
               died = true;
               soundGameOver.play()
               window.setTimeout(function(){window.location.href = '../index.html';}, 1000);
@@ -489,12 +489,13 @@
         if ((scene.getObjectByName(name_bullet_enemy_2).position.x == toPosXEnemy2) && 
         (scene.getObjectByName(name_bullet_enemy_2).position.y == toPosYEnemy2) &&
         (scene.getObjectByName(name_bullet_enemy_2).position.z == toPosZEnemy2)){
-          if(camera.position.x == toPosXEnemy2 && camera.position.y == toPosYEnemy2 && camera.position.z == toPosZEnemy2){
-            console.log('Preso')
-            characterLifes -= 1.25;
+          var range_camera = 0.8;
+          if(camera.position.x >= toPosXEnemy2 - range_camera && camera.position.x <= toPosXEnemy2 + range_camera && 
+            camera.position.y >= toPosYEnemy2 - range_camera && camera.position.y <= toPosYEnemy2 + range_camera && 
+            camera.position.z >= toPosZEnemy2 - range_camera && camera.position.z <= toPosZEnemy2 + range_camera){
+            characterLifes -= damage_enemy2;
             if(characterLifes <= 0) {
               characterLifes == 0;
-              console.log('Game over');
               died = true;
               soundGameOver.play()
               window.setTimeout(function(){window.location.href = '../index.html';}, 1000);
@@ -509,6 +510,8 @@
     // if both enemy are dead them the portal is enabled and the user can go to the next level
     function enemies_dead(){
       if(died_enemy_2 && died_enemy){
+        canShotEnemy1 = false
+        canShotEnemy2 = false
         delete_lights(scene, dirLight, lightAmbient);
         if (get_light == 'night') {
           scene.add(hemiLight);
