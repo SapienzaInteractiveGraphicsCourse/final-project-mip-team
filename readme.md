@@ -31,10 +31,10 @@ The game is developed using **threejs** library by [Irene Bondanza](irene,bondan
 - **X/RIGHT-CLICK** to shoot.
 
 ## Tips and suggestions
+- In the second and third level the damage to the enemies depends from the parts of the body that have been hit.
 - We encourage you to play the game in Chrome browser to improve the gameplay.
 - A good connection is suggested to reduce the loading time and to prevent some of the following inconvenience:
   * Very rarely the character at the start may appears stuck in the sky. Don't worry, you just need to reload the page.
   * Few times an enemy may becomes hard to hit. If so, just reload the page to restart the level.
-
 ## Play the Game
 The game is accessible from this [link](https://sapienzainteractivegraphicscourse.github.io/final-project-mip-team/).
