@@ -13,7 +13,7 @@
     var get_light = url.searchParams.get("light");
     var get_sex = url.searchParams.get("sex");
     var blocker, instructions;
-    // used to control user's movements 
+    // used to control user's movements
     var movements = [false,false,false,false,false]; //[up,down,left,right,shot]
     var prevTime = performance.now();
     var velocity = new THREE.Vector3();
@@ -190,7 +190,7 @@
         }
         prevTime = time;
       }
-    }    
+    }
     // animation
     var animate = function () {
       requestAnimationFrame( animate );
@@ -209,7 +209,7 @@
       update_health_bar();
 
       renderer.render(scene, camera);
-      
+
     }
     // load body part of first enemy
     function loading_first_enemy(){
@@ -261,7 +261,7 @@
               bulletModel.translateY( 0.2 );
               bulletModel.translateZ( -2.2 );
               soundArmy.play()
-            } 
+            }
           }
           movements[4] = false;
         }
@@ -275,17 +275,17 @@
         }
         if (scene.getObjectByName(name_bullet) && bulletLoaded) {
           bulletPosition.to({x:toPosX, y:toPosY, z:toPosZ}, time_shooting);
-          if ((scene.getObjectByName(name_bullet).position.x == toPosX) && 
+          if ((scene.getObjectByName(name_bullet).position.x == toPosX) &&
           (scene.getObjectByName(name_bullet).position.y == toPosY) &&
           (scene.getObjectByName(name_bullet).position.z == toPosZ)){
             if((intersect[5].object.name !== name_bullet) &&  (scene.getObjectByName(name_enemy)) &&
             (typeof (scene.getObjectByName(name_enemy)).getObjectByName(intersect[5].object.name) !== 'undefined')){
               // headshot
-              if(intersect[5].object.name == 'Head' || 
-              intersect[5].object.name == 'Hat' || 
-              intersect[5].object.name == 'Lips' || 
-              intersect[5].object.name == 'EyeDx' || 
-              intersect[5].object.name == 'EyeSx' || 
+              if(intersect[5].object.name == 'Head' ||
+              intersect[5].object.name == 'Hat' ||
+              intersect[5].object.name == 'Lips' ||
+              intersect[5].object.name == 'EyeDx' ||
+              intersect[5].object.name == 'EyeSx' ||
               intersect[5].object.name == 'Hair'){
                 enemyLifes -= 1,5*damage;
               }
@@ -301,12 +301,12 @@
             }
             if((intersect[5].object.name !== name_bullet) &&  (scene.getObjectByName(name_enemy_2)) &&
             (typeof (scene.getObjectByName(name_enemy_2)).getObjectByName(intersect[5].object.name) !== 'undefined')){
-              // headshot 
-              if(intersect[5].object.name == 'Head2' || 
-              intersect[5].object.name == 'Hat2' || 
-              intersect[5].object.name == 'Lips2' || 
-              intersect[5].object.name == 'EyeDx2' || 
-              intersect[5].object.name == 'EyeSx2' || 
+              // headshot
+              if(intersect[5].object.name == 'Head2' ||
+              intersect[5].object.name == 'Hat2' ||
+              intersect[5].object.name == 'Lips2' ||
+              intersect[5].object.name == 'EyeDx2' ||
+              intersect[5].object.name == 'EyeSx2' ||
               intersect[5].object.name == 'Hair2'){
                 enemyLifes2 -= 1.5*damage;
               }
@@ -321,7 +321,7 @@
               }
             }
             scene.remove(scene.getObjectByName(name_bullet));
-            bulletLoaded = false;            
+            bulletLoaded = false;
             crosshair.material = new THREE.LineBasicMaterial({ color: crossColorReady });
           }
         }
@@ -379,7 +379,7 @@
       walk()
       if(scene.getObjectByName(name_enemy)) scene.getObjectByName(name_enemy).lookAt(camera.position);
       if(canShotEnemy1) time_shooting_rate += 1;
-      if(time_shooting_rate / 46 == 1) {
+      if(time_shooting_rate / 56 == 1) {
         enemy_shooting_1 = true;
         time_shooting_rate = 0;
       }
@@ -394,7 +394,7 @@
       ArmDx_2.position.z = 0.8;
       if(scene.getObjectByName(name_enemy_2)) scene.getObjectByName(name_enemy_2).lookAt(camera.position);
       if(canShotEnemy2) time_shooting_rate2 += 1;
-      if(time_shooting_rate2 / 72 == 1) {
+      if(time_shooting_rate2 / 82 == 1) {
         enemy_shooting_2 = true;
         time_shooting_rate2 = 0;
       }
@@ -426,7 +426,7 @@
               bulletModelEnemy.translateY( 2.85);
               bulletModelEnemy.translateZ( 2);
             }
-          } 
+          }
         enemy_shooting_1 = false;
       }
       if (bulletModelEnemy && !bulletLoadedEnemy) {
@@ -438,12 +438,12 @@
       }
       if (scene.getObjectByName(name_bullet_enemy) && bulletLoadedEnemy) {
         bulletPositionEnemy.to({x:toPosXEnemy, y:toPosYEnemy, z:toPosZEnemy}, time_shooting);
-        if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) && 
+        if ((scene.getObjectByName(name_bullet_enemy).position.x == toPosXEnemy) &&
         (scene.getObjectByName(name_bullet_enemy).position.y == toPosYEnemy) &&
         (scene.getObjectByName(name_bullet_enemy).position.z == toPosZEnemy)){
           var range_camera = 0.8;
-          if(camera.position.x >= toPosXEnemy - range_camera && camera.position.x <= toPosXEnemy + range_camera && 
-            camera.position.y >= toPosYEnemy - range_camera && camera.position.y <= toPosYEnemy + range_camera && 
+          if(camera.position.x >= toPosXEnemy - range_camera && camera.position.x <= toPosXEnemy + range_camera &&
+            camera.position.y >= toPosYEnemy - range_camera && camera.position.y <= toPosYEnemy + range_camera &&
             camera.position.z >= toPosZEnemy - range_camera && camera.position.z <= toPosZEnemy + range_camera){
             characterLifes -= damage_enemy1;
             if(characterLifes <= 0) {
@@ -474,7 +474,7 @@
               bulletModelEnemy2.translateY( 2.85);
               bulletModelEnemy2.translateZ( 2);
             }
-          } 
+          }
         enemy_shooting_2 = false;
       }
       if (bulletModelEnemy2 && !bulletLoadedEnemy2) {
@@ -486,12 +486,12 @@
       }
       if (scene.getObjectByName(name_bullet_enemy_2) && bulletLoadedEnemy2) {
         bulletPositionEnemy2.to({x:toPosXEnemy2, y:toPosYEnemy2, z:toPosZEnemy2}, time_shooting);
-        if ((scene.getObjectByName(name_bullet_enemy_2).position.x == toPosXEnemy2) && 
+        if ((scene.getObjectByName(name_bullet_enemy_2).position.x == toPosXEnemy2) &&
         (scene.getObjectByName(name_bullet_enemy_2).position.y == toPosYEnemy2) &&
         (scene.getObjectByName(name_bullet_enemy_2).position.z == toPosZEnemy2)){
           var range_camera = 0.8;
-          if(camera.position.x >= toPosXEnemy2 - range_camera && camera.position.x <= toPosXEnemy2 + range_camera && 
-            camera.position.y >= toPosYEnemy2 - range_camera && camera.position.y <= toPosYEnemy2 + range_camera && 
+          if(camera.position.x >= toPosXEnemy2 - range_camera && camera.position.x <= toPosXEnemy2 + range_camera &&
+            camera.position.y >= toPosYEnemy2 - range_camera && camera.position.y <= toPosYEnemy2 + range_camera &&
             camera.position.z >= toPosZEnemy2 - range_camera && camera.position.z <= toPosZEnemy2 + range_camera){
             characterLifes -= damage_enemy2;
             if(characterLifes <= 0) {
