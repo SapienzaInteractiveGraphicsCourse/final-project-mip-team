@@ -22,7 +22,7 @@ If you succeed, you will finally be the king/queen of the three kingdoms!
 
 
 
-The game is developed using **threejs** library by [Irene Bondanza](bondanza.1747677@studenti.uniroma1.it), [Martina Valleriani](vallerianimartina@gmail.com) e [Pietro Nardelli](pietro.nardelli@outlook.com).
+The game is developed using **threejs** library by [Irene Bondanza](irene,bondanza92@gmail.com), [Martina Valleriani](vallerianimartina@gmail.com) e [Pietro Nardelli](pietro.nardelli@outlook.com).
 
 ## How to play
 

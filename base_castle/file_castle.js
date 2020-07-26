@@ -40,7 +40,7 @@
     var died = false;
     var died_enemy = false;
     var characterLifes = 10;
-    var enemyLifes = 1;
+    var enemyLifes = 10;
 
     var dirLight, hemiLight, lightAmbient;
 
