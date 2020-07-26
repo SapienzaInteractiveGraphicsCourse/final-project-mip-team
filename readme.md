@@ -35,4 +35,4 @@ The game is developed using **threejs** library by [Irene Bondanza](irene,bondan
 - Character may get stuck in some particular spot due to collisions.
 
 ## Play the Game
-The game is accessible from this [link]().
+The game is accessible from this [link](https://sapienzainteractivegraphicscourse.github.io/final-project-mip-team/).
