@@ -379,7 +379,7 @@
       walk()
       if(scene.getObjectByName(name_enemy)) scene.getObjectByName(name_enemy).lookAt(camera.position);
       if(canShotEnemy1) time_shooting_rate += 1;
-      if(time_shooting_rate / 86 == 1) {
+      if(time_shooting_rate / 96 == 1) {
         enemy_shooting_1 = true;
         time_shooting_rate = 0;
       }
@@ -394,7 +394,7 @@
       ArmDx_2.position.z = 0.8;
       if(scene.getObjectByName(name_enemy_2)) scene.getObjectByName(name_enemy_2).lookAt(camera.position);
       if(canShotEnemy2) time_shooting_rate2 += 1;
-      if(time_shooting_rate2 / 102 == 1) {
+      if(time_shooting_rate2 / 122 == 1) {
         enemy_shooting_2 = true;
         time_shooting_rate2 = 0;
       }
