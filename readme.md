@@ -27,8 +27,8 @@ The game is developed using **threejs** library by [Irene Bondanza](irene,bondan
 ## How to play
 
 - **W**, **A**, **S**, **D** to move the character around the map.
-- **ESC** to check the key bindings.
-- **X/RIGHT-CLICK** to shoot.
+- **ESC** to check the key bindings and pause the game.
+- **X/LEFT-CLICK** to shoot.
 
 ## Tips and suggestions
 - In the second and third level the damage to the enemies depends from the parts of the body that have been hit.
