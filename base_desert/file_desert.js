@@ -337,7 +337,6 @@ var animate = function () {
 				bulletModel.position.copy( weaponModel.position );
 				bulletModel.rotation.copy( weaponModel.rotation );
 				bulletModel.translateX( 0 );
-				bulletModel.translateX( 0 );
 				bulletModel.translateY( 0.028 );
 				bulletModel.translateZ( -0.15 );
 
