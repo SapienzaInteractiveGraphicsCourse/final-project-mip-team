@@ -30,9 +30,10 @@ The game is developed using **threejs** library by [Irene Bondanza](irene,bondan
 - **ESC** to check the key bindings.
 - **X/RIGHT-CLICK** to shoot.
 
-## Known bugs
-- Sometimes the shoot (both from enemy and character) doesn't hit the target.
-- Character may get stuck in some particular spot due to collisions.
+## Tips and suggestions
+- We encourage you to play the game in Chrome browser to improve the gameability.
+- A good connection is suggested to reduce the loading time.
+- **Very rarely** the character at the start may appears stuck in the sky. Don't worry, you just need to reload the page.
 
 ## Play the Game
 The game is accessible from this [link](https://sapienzainteractivegraphicscourse.github.io/final-project-mip-team/).

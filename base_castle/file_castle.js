@@ -273,7 +273,7 @@
 
 
       if(canShotEnemy) time_shoting_rate += 1;
-      if(time_shoting_rate / 100 == 1) {
+      if(time_shoting_rate / 50 == 1) {
         enemy_shooting = true;
         time_shoting_rate = 0;
       }
