@@ -192,7 +192,7 @@ export function check_collisions(controls, camera, scene, collisions, collisionD
   raycasters['back'].set(raycasterOrigin, new THREE.Vector3(worldDirection.x, worldDirection.y, -1*worldDirection.z));
   intersects['back'] = raycasters['back'].intersectObjects( scene.children, true );
   // Right collisions, the direction is computed from the front direction:
-  // perpendicular clockwise: https://gamedev.stackexchange.com/questions/70075/how-can-i-find-the-perpendicular-to-a-2d-vector
+  // perpendicular clockwise
   raycasters['right'].set(raycasterOrigin, new THREE.Vector3(-worldDirection.z, worldDirection.y, worldDirection.x));
   intersects['right'] = raycasters['right'].intersectObjects( scene.children, true );
   // Left collisions, the direction is computed from the front direction:
@@ -220,8 +220,6 @@ export function check_collisions(controls, camera, scene, collisions, collisionD
 
 export function add_crosshair (crosshair, camera, collisionDistance, colorReady, sizeX, sizeY) {
   var crossMaterial = new THREE.LineBasicMaterial({ color: colorReady });
-
-
   var crossGeometry = new THREE.Geometry();
 
   // crosshair

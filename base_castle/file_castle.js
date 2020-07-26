@@ -155,13 +155,6 @@
           // To move the gun together with the camera, but translated of the right position
           if (scene.getObjectByName(name_bullet_enemy)) {
             var bulletModelEnemy = scene.getObjectByName(name_bullet_enemy);
-            //bulletModelEnemy.position.copy( weaponModelEnemy.position);
-            //bulletModelEnemy.rotation.copy( weaponModelEnemy.rotation);
-            /*
-            bulletModelEnemy.translateX( -8);
-            bulletModelEnemy.translateY( -44);
-            bulletModelEnemy.translateZ( -22);
-            */
             bulletModelEnemy.translateX( -60);
             bulletModelEnemy.translateY( 25);
             bulletModelEnemy.translateZ( -140);
